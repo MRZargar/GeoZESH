@@ -1,0 +1,88 @@
+version: '3'
+
+services:
+  web:
+    build: 
+      context: ./Server/.
+    container_name: App
+    ports: 
+      - 80:8000
+    volumes: 
+      - ./GeoLabServer:/home/App
+    restart: always
+    environment: 
+      - DB_HOST=db
+      - DB_NAME=postgres
+      - DB_USER=postgres
+      - DB_PASS=postgres
+      - DB_PORT=5432
+      - GEOLABAPI_HOST=http://api
+      - GEOLABAPI_PORT=80
+      - EMAIL_HOST=smtp.gmail.com
+      - EMAIL_HOST_USER=ut810395@gmail.com
+      - EMAIL_HOST_PASSWORD=ABcd!@1234
+      - EMAIL_PORT=587
+    command: >
+      sh -c "python manage.py makemigrations download users message stations &&
+             python manage.py migrate && 
+             python manage.py runserver 0.0.0.0:8000"
+    depends_on: 
+      - db
+      - api
+
+# mv ./users/models.py ./users/models.py.temp &&
+# mv ./users/models.py.SuperUser ./users/models.py &&
+# python manage.py makemigrations download users message stations &&
+# python manage.py migrate && 
+# echo "from users.models import CustomUser as User; User.objects.create_superuser('geolab', 'geolab@ut.ac.ir', 'Ab1234')" | python manage.py shell &&
+# mv ./users/models.py ./users/models.py.SuperUser &&
+# mv ./users/models.py.temp ./users/models.py &&
+# python manage.py makemigrations download users message stations &&
+# python manage.py migrate
+
+  api:
+    build: 
+      context: ./API/.
+    container_name: GeoLabAPI
+    restart: always
+    ports: 
+      - 8000:80
+    environment: 
+      - DB_HOST=db
+      - DB_NAME=postgres
+      - DB_USER=postgres
+      - DB_PASS=postgres
+      - DB_PORT=5432
+    depends_on: 
+      - db
+
+  db:
+    image: kartoza/postgis:latest
+    container_name: db
+    volumes: 
+      - db_geolab:/var/lib/postgresql
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASS=postgres
+      - POSTGRES_DBNAME=postgres
+    ports:
+      - "5432:5432"
+  
+  pgAdmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgAdmin
+    ports: 
+      - "8080:80"
+    volumes: 
+      - pgAdmin_geolab:/var/lib/pgadmin
+    restart: always
+    environment: 
+      - PGADMIN_DEFAULT_EMAIL=geolab@ut.ac.ir
+      - PGADMIN_DEFAULT_PASSWORD=Ab1234!@
+    depends_on: 
+      - db
+    
+volumes: 
+  db_geolab:
+  pgAdmin_geolab:

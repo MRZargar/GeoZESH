@@ -1,0 +1,57 @@
+{% load static %} {% load crispy_forms_tags %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'assets/images/uni.png' %}">
+    <title> Sign Up </title>
+    <link href="{% static 'dist/css/style.min.css' %}" rel="stylesheet">
+    <script src="{% static 'dist/vendor/jquery/ajax-jquery-3.4.1.min.js' %}"></script>
+</head>
+
+<body>
+    <div class="SignUp--user">
+        <ul class="messagelist">
+            <li class="success">
+                {% if messages %} {% for message in messages %}
+                <b style="font-size: 20px; color: rgb(18, 119, 119);">{{ message }}</b> {% endfor %} {% endif %}
+            </li>
+        </ul>
+        <div class='password--reset--header'>
+            <h2>Sign up</h2>
+        </div>
+        <div class="password--reset--box" id="pwd-container">
+            <div class="card-body">
+                <div class="material-icon-list-demo">
+                    <section class="login-form">
+                        <form method="post" data-url="{%url 'signup2'%}">
+                            {% csrf_token %} {{ form|crispy }}
+                            <div class="pwstrength_viewport_progress"></div>
+                            <button class="btn btn-success btn-password--reset" type="submit">Sign Up</button>
+                        </form>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer class="footer--another--signup">
+        © 2020 <a href="https://ut.ac.ir" target="_blank">University of Tehran</a> All rights reserved
+    </footer>
+
+</body>
+
+<script>
+    $(document).ready(function() {
+        $("#hint_id_password1").css('display', 'none')
+        $("#hint_id_password2").css('display', 'none')
+        $("#id_phone_number").attr('type', 'text');
+    });
+</script>
+
+<script src="{% static 'dist/js/password_strength_meter.js' %}"></script>
+
+
+</html>

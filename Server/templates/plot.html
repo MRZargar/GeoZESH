@@ -1,0 +1,819 @@
+{% extends "base.html" %} {% load static %} {% block title %}Plot page{% endblock %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'assets/libs/bootstrap/dist-v3/css/bootstrap.css' %}">
+<link rel="stylesheet" href="{% static 'assets/libs/calendar/dist/jquery.md.bootstrap.datetimepicker.style.css' %}">
+<link rel="stylesheet" href="{% static 'assets/libs/chart/dygraph.css' %}">
+<link rel="stylesheet" href="{% static 'assets/libs/treeview/bootstrap-treeview.min.css' %}">
+<link rel="stylesheet" href="{% static 'dist/css/plot_style.css' %}" type="text/css">
+<link rel="stylesheet" href="{% static 'dist/css/ol.css' %}" type="text/css">
+<link rel="stylesheet" href="{% static 'dist/css/datetimepicker.css' %}" type="text/css">
+
+<style>
+    .ul-plot-toolbar {
+        list-style-type: none;
+        padding: 2.5px;
+        overflow: hidden;
+        margin: auto auto;
+    }
+    
+    .li-plot-toolbar {
+        padding: 5px;
+        float: right;
+    }
+    
+    .li-plot-toolbar-text {
+        float: right;
+        color: white;
+        text-align: center;
+        padding-top: 8px;
+        padding-right: 2px;
+        padding-left: 10px;
+        font-size: large;
+        font-weight: bold;
+    }
+
+    .dygraph-legend {
+        background-color: rgba(200, 200, 255, 0.75);
+        padding: 1px;
+        border-radius: 20px;
+        box-shadow: 1px 1px px #888;
+        width: auto;
+        left: 100px !important;
+      }
+</style>
+
+{% endblock %} {% block content %}
+<div class="line_graph_main">
+    <div id='myChart1' class="line_graph_1" ></div>
+    <div id='myChart2' class="line_graph_2" ></div>
+    <div id='myChart3' class="line_graph_3" ></div>
+    <div id='myChart4' class="line_graph_4" ></div>
+</div>
+<div class="histogram_and_treeView">
+    <div class="treeView_main">
+        <div class="row-map1">
+            <div class="column-map1" >
+                <button type="button" class="btn btn-default" id="btn-search" style="height: 40px;">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+            <div class="column-map2" style="padding: 2px; width: 83%;">
+                <div class="form-group">
+                    <label for="input-search" class="sr-only">Search Tree:</label>
+                    <input type="input" class="form-control" id="input-search" placeholder="Type to search..." value="" style="height: 40px;">
+                </div>
+            </div>
+        </div>
+        <div class="row-map3">
+            <div id="myTreeView" class="TreeView-plot"></div>
+        </div>
+    </div>
+    <div class="histogram_and_calender">
+        <div class="calendar_main">
+            <ul class="ul-plot-toolbar">
+                <li class="li-plot-toolbar" style="width: 140px; padding: 0;">
+                    <div class="input-group">
+                        <input type="text" id="inputDate2" class="form-control" placeholder="Gregorian Calendar" aria-label="date2" aria-describedby="date2">
+                        <span class="input-group-addon" id="main_cleander">
+                            <span class="glyphicon glyphicon-calendar" style="cursor: pointer;" id="date2"></span>
+                        </span>
+                    </div>
+                </li>
+                <li style="float: left;">
+                    <button type="button" class="btn btn-secondary " id = "download_button" data-toggle="modal" data-target=".bd-example-modal-lg">
+                        download
+                    </button>
+                    <a tabindex="0" class="btn btn-info" id="download_help_button" role="button" data-toggle="popover" data-trigger="focus" title="Download help" 
+                       data-content="Select the stations and time you want, after registering your request and processing the download link will be visible in the requests section.">
+                        Help
+                    </a>
+                </li>
+                <h3 style="text-align: center; margin: 0; padding: 0;"id="histogram-label"><b>Histogram</b></h3>
+            </ul>
+        </div>
+        <div id='myHistogram' class="histogram_main" style="width: 100%;">
+            <ul class="chart">
+              {% for data in hist_data %}
+                  <li class="bar_value">
+                    <a href="#" ><span style="height:{{data}}%" title="{{ forloop.counter0 }}"></span></a>
+                  </li>
+              {% endfor %}
+            </ul>  
+
+        </div>
+    </div>
+    <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" id="download_all">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel"><b style="position: absolute; margin-top: 9px;">DOWNLOAD</b></h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body2">
+                <div class="overflow-auto">
+                    <div class="modal-body">
+
+                    </div>
+                </div>
+                <hr>
+                 <div class="container">
+                    <div class="row">
+                        <div class="col" style="flex-grow:0.11">
+                            <p class="time_for_cleander" style="margin-top:7.5px; margin-left: 15px;">START DATE</p>
+                            <p class="time_for_cleander" style="margin-top:7.5px; margin-left: 15px;">START HOUR</p>
+                        </div>
+                        <div  id="right_cleander" class="col"  style="flex-grow:0.30">
+                            <div class="calendar" style="width: 150px;">
+                                <div class="input-group">
+                                    <input type="text" id="inputDate3" class="form-control" placeholder="Gregorian Calendar" aria-label="date3" aria-describedby="date3">
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar" style="cursor: pointer;" id="date3"></span>
+                                    </span>
+                                </div>
+                                <div class='input-group date' id='datetimepicker_start' readonly>
+                                    <input type='text' class="form-control" id="start_hour">
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-time"></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col" style="flex-grow:0.11">
+                            <p class="time_for_cleander" style="margin-top:7.5px; margin-left: 15px;">END DATE</p>
+                            <p class="time_for_cleander" style="margin-top:7.5px; margin-left: 15px;">END HOUR</p>
+                        </div>
+                        <div  id="left_cleander" class="col" style="flex-grow:0.30; margin-left: -15px;">
+                            <div class="calendar" style="width: 150px;">
+                                <div class="input-group">
+                                    <input type="text" id="inputDate4" class="form-control" placeholder="Gregorian Calendar" aria-label="date4" aria-describedby="date4">
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar" style="cursor: pointer;" id="date4"></span>
+                                    </span>
+                                </div>
+                                <div class='input-group date' id='datetimepicker_end' readonly>
+                                    <input type='text' class="form-control" id="end_hour">
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-time"></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class = "time_error">
+                    <p id="error_2_id_description" class="invalid-feedback"><strong>The start time could not be greater than the end time</strong></p>
+                    <p id="correct_2_id_description" class="valid-feedback"><strong>Please check your requests</strong></p>
+                </div>
+                <div id="download_all_day">
+
+
+                </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger"data-dismiss="modal" style ="background-color: #f20a34">Close</button>
+            <button type="button" class="btn btn-success pull-right" id="download_end" style ="background-color: #36bea6">download</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+</div>
+
+<script type="text/javascript" src="{% static 'assets/libs/MathJax/MathJax.js' %}?config=AM_HTMLorMML-full"></script>
+<script src="{% static 'assets/libs/jquery/dist/jquery.min.js' %}"></script>
+<script src="{% static 'assets/libs/bootstrap/dist-v3/js/bootstrap.js' %}"></script>
+<script src="{% static 'assets/libs/treeview/bootstrap-treeview.min.js' %}"></script>
+<script src="{% static 'assets/libs/calendar/dist/jquery.md.bootstrap.datetimepicker.js' %}"></script>
+<script src="{% static 'assets/libs/chart/dygraph.js' %}"></script>
+<script src="{% static 'assets/libs/chart/dygraph.min.js' %}"></script>
+<script src="{% static 'assets/libs/chart/interaction.js' %}"></script>
+<script src="{% static 'assets/libs/chart/synchronizer.js' %}"></script>
+<script src="{% static 'dist/js/ol.js' %}"></script>
+<script src="{% static 'dist/js/moment.js' %}"></script>
+<script src="{% static 'dist/js/datetimepicker.min.js' %}"></script>
+
+<script>
+    $(function () {
+        $('[data-toggle="popover"]').popover()
+    })
+    $(function () {
+      $('#download_button').tooltip({
+        template: '<div class="tooltip md-tooltip-main"><div class="tooltip-arrow md-arrow"></div><div class="tooltip-inner md-inner-main"></div></div>'
+      });
+    })
+    var hist_bar_update = false;
+    $(document).on('click', '#date2', function(event){
+        event.preventDefault();
+        hist_bar_update = true;
+    })
+
+    $(document).on('click', '.mds-bootstrap-persian-datetime-picker-container .table > tbody > tr > td[data-day]', function(event){
+        event.preventDefault();
+        if (hist_bar_update){
+            var date = $('#inputDate2').val()
+            var station_id = "{{StationId}}";
+            $("#myHistogram").css("opacity", 0.5)
+            $.ajax({
+                type: "GET",
+                data: {
+                    'StationId' : station_id,
+                    'Date' : date
+                },
+                url : "{% url 'update_histogram' %}",
+                success: function(data){
+                    var hist = '<ul class="chart">';
+                    for (i in data.hist_data){
+                        bar = '<li class="bar_value">'+
+                            '<a href="#" ><span style="height:' + data.hist_data[i]+'%' + '" title="'+ i + '"></span></a>' + 
+                        '</li>';
+                        hist += bar;
+                    }
+                    $("#myHistogram").empty();
+                    $("#myHistogram").prepend(hist)
+                    $("#myHistogram").css("opacity", 1)
+                    hist_bar_update = false;
+                },
+                error: function(date){
+                    $("#myHistogram").css("opacity", 1)
+                    hist_bar_update = false;
+                }
+            });
+        };
+    });
+
+    $(document).on('click', '.bar_value', function(event) {
+    event.preventDefault();
+    $(".line_graph_main").css("opacity", 0.5)
+    $("#myHistogram").css("opacity", 0.5)
+    var station_id = "{{StationId}}";
+    var hour = $(this).find("span").attr("title");
+    if (window.value !== undefined)
+        window.value.css("background", "#2d8180")
+    var hist_bar = $(this).find("span")
+    window.value = hist_bar;
+    $(this).find("span").css("background", "#545b62");
+    var date = $('#inputDate2').val()
+    $.ajax({
+        type: "GET",
+        data: {
+            'StationId' : station_id,
+            'Date' : date,
+            'Hour' : hour,
+        },
+        url : "{% url 'update_plot' %}",
+        success: function(data){
+            g = [];
+            g.push(
+                new Dygraph(
+                    document.getElementById("myChart1"),
+                    data.xPlotData,
+                    {
+                        animatedZooms: true,
+                        drawPoints: true,
+                        pointSize: 3,
+                        axisLineWidth: 2,
+                        ylabel: "`a_x` <small>`[m/s^2]`</small>",
+                        title: "{{StationId}}({{StationCity}}) <p id='plot_help'>"
+                             + "<span style='font-size:14px; padding-right:2px;' class='glyphicon glyphicon-search'></span>"
+                             + "Hold down the Shift key and drag the mouse</p>",
+                        axes:{
+                            'x':{
+                                axisLabelFontSize: 0
+                            }
+                        },
+                        interactionModel: {                    
+                            'mousedown' : downV3,
+                            'mousemove' : moveV3,
+                            'mouseup' : upV3,
+                            'dblclick' : dblClickV4
+                        },
+                    }
+                )
+            );
+            g.push(
+                new Dygraph(
+                    document.getElementById("myChart2"),
+                    data.yPlotData,
+                    {
+                        animatedZooms: true,
+                        drawPoints: true,
+                        pointSize: 3,
+                        axisLineWidth: 2,
+                        ylabel: "`a_y` <small>`[m/s^2]`</small>",
+                        axes:{
+                            'x':{
+                                axisLabelFontSize: 0
+                            }
+                        },
+                        interactionModel: {                    
+                            'mousedown' : downV3,
+                            'mousemove' : moveV3,
+                            'mouseup' : upV3,
+                            'dblclick' : dblClickV4
+                        }
+                    }
+                )
+            );
+            g.push(
+                new Dygraph(
+                    document.getElementById("myChart3"),
+                    data.zPlotData,
+                    {
+                        animatedZooms: true,
+                        drawPoints: true,
+                        pointSize: 3,
+                        axisLineWidth: 2,
+                        ylabel: "`a_z` <small>`[m/s^2]`</small>",
+                        axes:{
+                            'x':{
+                                axisLabelFontSize: 0
+                            }
+                        },
+                        interactionModel: {                    
+                            'mousedown' : downV3,
+                            'mousemove' : moveV3,
+                            'mouseup' : upV3,
+                            'dblclick' : dblClickV4,
+                        }
+                    }
+                )
+            );
+            g.push(
+                new Dygraph(
+                    document.getElementById("myChart4"),
+                    data.tempPlotData,
+                    {
+                        animatedZooms: true,
+                        showRangeSelector: true,
+                        rangeSelectorPlotFillColor: "#FFF",
+                        drawPoints: true,
+                        pointSize: 3,
+                        axisLineWidth: 2,
+                        ylabel: "`temp` <small>`[C]`</small>",
+                        xlabel: "<b>GPS Time [sec]</b>",
+                        interactionModel: {                    
+                            'mousedown' : downV3,
+                            'mousemove' : moveV3,
+                            'mouseup' : upV3,
+                            'dblclick' : dblClickV4,
+                        }
+                    }
+                )
+            );
+            var sync = Dygraph.synchronize(g, {
+                zoom: true,
+                selection: true,
+                range: false
+            });
+            $(".line_graph_main").css("opacity", 1)
+            $("#myHistogram").css("opacity", 1)
+            document.querySelectorAll('.dygraph-label.dygraph-ylabel')[3].style.marginTop = "5px";
+
+
+            },
+            error: function(){
+              $(".line_graph_main").css("opacity", 1)
+              $("#myHistogram").css("opacity", 1)
+            }
+          })
+        });
+
+
+    $(document).on('click', "#download_end", function(event){
+        event.preventDefault();
+        $("#download_all").css("opacity", 0.5)
+        $('#error_3_id_description').css('display', 'none')
+        $('#error_2_id_description').css('display', 'none')
+        $('#correct_2_id_description').css('display', 'none')
+        var stations = [];
+        var start_hour = $("#start_hour").val();
+        var end_hour = $("#end_hour").val();
+        var start_time = $('#inputDate3').val()
+        var end_time = $('#inputDate4').val()
+        $.each($("input[name='station']:checked"), function(){            
+            stations.push($(this).val());
+        });
+        if (stations.length == 0){
+            $("#download_all").css("opacity", 1)
+            $('#error_3_id_description').css('display', 'block')
+        }else{
+            $.ajax({
+              type: "GET",
+              data: {
+                'StaionsId': stations,
+                'StartHour' : start_hour,
+                'EndHour' : end_hour,
+                'StartTime' : start_time,
+                'EndTime': end_time,
+                'method' : "download"
+              },
+              url: "{% url 'downloads_files' request.user.pk %}",
+            success: function() {
+                $("#download_all").css("opacity", 1)
+                $('#error_3_id_description').css('display', 'none')
+                $('#error_2_id_description').css('display', 'none')
+                $('#correct_2_id_description').css('display', 'block')
+            },
+            error: function(){
+                $('#error_2_id_description').css('display', 'block')
+                $("#download_all").css("opacity", 1)
+            },
+
+            });
+        }
+    });
+
+    $(document).on('click', '.bar_value2', function(event) {
+    event.preventDefault();
+    var hour = $(this).find("span").attr("title");
+    if  ($(this).find("span").css("background")[4]==2){
+        $(this).find("span").css("background", "#2d8180");
+    }else{
+        $(this).find("span").css("background", "#f20a34");
+    }
+    });
+
+
+
+
+    $(document).on('click', "#download_button", function(event){
+        $('#error_3_id_description').css('display', 'none')
+        $('#error_2_id_description').css('display', 'none')
+        $('#correct_2_id_description').css('display', 'none')
+        var station_id = "{{StationId}}";
+        $(".bar_value2").find('span').css("background", "#2d8180");
+        event.preventDefault();
+        $(".modal-body").empty()
+        $.ajax({
+            type: "GET",
+            data: {
+                 'method' : "give station name"
+            },
+            url: "{% url 'downloads_files' request.user.pk %}",
+            success: function(data) {
+                count = data.count;
+                main = "";
+                if (count == 0) {
+                    temp = "No station has been registered yet";
+                } else {
+                    for (i in data.stations_list) {
+                        this_station_id = data.stations_list[i];
+                        if (i % 2 == 0 && i != 0) {
+                            column = '<div class="w-100" style="height:15px;"></div>';
+                        } else {
+                            column = "";
+                        }
+                        if (this_station_id == station_id) {
+                            temp =
+                                '<div class="col" style="flex-grow:0.3">' +
+                                '<div class="form-check">' +
+                                '<input class="form-check-input" type="checkbox" value="'+ this_station_id +'" id="defaultCheck1" checked="true" name="station" style="margin-left:-18px">' +
+                                '<label class="form-check-label" for="defaultCheck1">' +
+                                this_station_id +
+                                '</label>' +
+                                '</div>' +
+                                '</div>' +
+                                column 
+                        }else{
+                            temp =
+                                '<div class="col" style="flex-grow:0.3">' +
+                                '<div class="form-check">' +
+                                '<input class="form-check-input" type="checkbox" value="'+ this_station_id +'" id="defaultCheck1" name="station" style="margin-left:-18px">' +
+                                '<label class="form-check-label" for="defaultCheck1">' +
+                                this_station_id +
+                                '</label>' +
+                                '</div>' +
+                                '</div>' +
+                                column 
+                        }
+                        main += temp;
+                    };
+                };
+                final = '<div class="container">' + '<div class="row">' + main + '</div>'
+                 +'<p id="error_3_id_description" class="invalid-feedback"><strong>Please select at least one station</strong></p>'
+                $('.modal-body').prepend(final);
+            }
+        });
+    });
+
+    var VectorSource = ol.source.Vector;
+    var GeoJSON = ol.format.GeoJSON;
+
+    var vectorS = new VectorSource({
+        features: (new GeoJSON()).readFeatures({{ geojsonObject | safe }})
+    });
+
+
+    function myTreeData() {
+            var json = '[';
+            vectorS.forEachFeature(function (feature) {
+                health = feature.get('Health');
+                var st_id = feature.get('ID');
+                var  url = "{%url 'plot' '0' %}".replace('0', st_id);
+                if (health == 0){
+                    name = "<span style='color:orange'> <a href="+ url +" style='color:orange;'> " + feature.get('StationId') + " (" + feature.get('City') + ")" + "</a></span>";
+                }
+                else if (health == 1){
+                    name = "<span style='color:green'> <a href="+ url +" style='color:green;'> " + feature.get('StationId')+ " (" + feature.get('City') + ")" + "</a></span>";
+                }
+                else if (health == 2) { 
+                    name = "<span style='color:red'><a href="+ url +" style='color:red;'> " + feature.get('StationId')+ " (" + feature.get('City') + ")" + "</a></span>";
+                }else{
+                    name = "<span style='color:black'><a href="+ url +" style='color:black;'> " + feature.get('StationId')+ " (" + feature.get('City') + ")" + "</a></span>";
+                }
+                json = json + "{"
+                            + '"text": "' + name + '", '
+                            + '"color": "#234b6e", '
+                            + '"Longitude": "' + feature.get('Longitude') + '", '
+                            + '"Latitude": "' + feature.get('Latitude') + '", '
+                            + (feature.get('Status') == 'Active' ? '"tags": ["Active"], ' : '')
+                            + '"nodes":['
+                            {% if request.user.userType != 'is_user' %}
+                                + '{'
+                                    + '"text": "  ' + feature.get('Operator') + '", '
+                                    + '"icon": "glyphicon glyphicon-user"'
+                                + '},'
+                            {% endif %}
+                                + '{'
+                                    + '"text": "  ' + feature.get('Sensor Type') + '", '
+                                    + '"icon": "glyphicon glyphicon-wrench"'
+                                + '}, '
+                                + '{'
+                                    + '"text": "  ' + feature.get('Status') + '", '
+                                    + '"icon": "glyphicon glyphicon-' + (feature.get('Status') == 'Active' ? 'ok-sign"' : 'remove-sign"') + ', '
+                                    + '"color": ' + (feature.get('Status') == 'Active' ? '"green"' : '"red"')
+                                + '}'
+                            + ']},';
+            });
+            json = json.substr(0, json.length - 1) + ']';
+
+            return JSON.parse(json);;
+        };
+
+    var $searchableTree = $('#myTreeView').treeview({
+        data: myTreeData(),
+        showBorder: false,
+        color: "#428bca",
+        expandIcon: 'glyphicon glyphicon-chevron-right',
+        collapseIcon: 'glyphicon glyphicon-chevron-down',
+        highlightSelected: true,
+        levels: 1,  
+        showTags: true,
+        enableLinks: true,
+        searchResultColor: "#ffffff",
+        searchResultBackColor: "#aaaaaa",
+    });
+
+    var search = function(e) {
+        $searchableTree.treeview('collapseAll');
+        var pattern = $('#input-search').val();
+        var options = {
+        ignoreCase: false,
+        exactMatch: false,
+        revealResults: true
+        };
+        var results = $searchableTree.treeview('search', [ pattern, options ]);
+    };
+
+    $('#btn-search').on('click', search);
+    $('#input-search').on('keyup', search);
+</script>
+
+<script>
+        g = [];
+        g.push(
+            new Dygraph(
+                document.getElementById("myChart1"),
+                {{ xPlotData | safe }},
+                {
+                    drawPoints: true,
+                    pointSize: 3,
+                    rangeSelectorPlotFillColor: "#FFF",
+                    axisLineWidth: 2,
+                    ylabel: "<b>`a_x [m/s^2]`</b>",
+                    title: "{{StationId}}({{StationCity}}) <p id='plot_help'>"
+                         + "<span style='font-size:14px; padding-right:2px;' class='glyphicon glyphicon-search'></span>"
+                         + "Hold down the Shift key and drag the mouse</p>",
+                    axes:{
+                        'x':{
+                            axisLabelFontSize: 0
+                        }
+                    },
+                    interactionModel: {                    
+                        'mousedown' : downV3,
+                        'mousemove' : moveV3,
+                        'mouseup' : upV3,
+                        'dblclick' : dblClickV4
+                    },
+                }
+            )
+        );
+        g.push(
+            new Dygraph(
+                document.getElementById("myChart2"),
+                {{ yPlotData | safe }},
+                {
+                    animatedZooms: true,
+                    drawPoints: true,
+                    pointSize: 3,
+                    axisLineWidth: 2,
+                    ylabel: "<b>`a_y [m/s^2]`</b>",
+                    axes:{
+                        'x':{
+                            axisLabelFontSize: 0
+                        }
+                    },
+                    interactionModel: {                    
+                        'mousedown' : downV3,
+                        'mousemove' : moveV3,
+                        'mouseup' : upV3,
+                        'dblclick' : dblClickV4
+                    }
+                }
+            )
+        );
+        g.push(
+            new Dygraph(
+                document.getElementById("myChart3"),
+                {{ zPlotData | safe }},
+                {
+                    animatedZooms: true,
+                    drawPoints: true,
+                    pointSize: 3,
+                    axisLineWidth: 2,
+                    ylabel: "<b>`a_z [m/s^2]`</b>",
+                    interactionModel: {                    
+                        'mousedown' : downV3,
+                        'mousemove' : moveV3,
+                        'mouseup' : upV3,
+                        'dblclick' : dblClickV4,
+                    }
+                }
+            )
+        );
+        g.push(
+            new Dygraph(
+                document.getElementById("myChart4"),
+                {{ tempPlotData | safe }},
+                {
+                    animatedZooms: true,
+                    showRangeSelector: true,
+                    rangeSelectorPlotFillColor: "#FFF",
+                    drawPoints: true,
+                    pointSize: 3,
+                    axisLineWidth: 2,
+                    ylabel: "<b>`temp [C]`</b>",
+                    xlabel: "<b>GPS Time [sec]</b>",
+                    interactionModel: {                    
+                        'mousedown' : downV3,
+                        'mousemove' : moveV3,
+                        'mouseup' : upV3,
+                        'dblclick' : dblClickV4,
+                    }
+                }
+            )
+        );
+        var sync = Dygraph.synchronize(g, {
+            zoom: true,
+            selection: true,
+            range: false
+        });
+        document.querySelectorAll('.dygraph-label.dygraph-ylabel')[3].style.marginTop = "5px";
+</script>   
+
+<script>
+    // Darken a
+    function darkenColor(colorStr) {
+        // Defined in dygraph-utils.js
+        var color = Dygraph.toRGB_(colorStr);
+        color.r = Math.floor((255 + color.r) / 2);
+        color.g = Math.floor((255 + color.g) / 2);
+        color.b = Math.floor((255 + color.b) / 2);
+        return 'rgb(' + color.r + ',' + color.g + ',' + color.b + ')';
+    }
+</script>
+
+
+<script type="text/javascript">
+    var start_time_d = {{start_time}}
+    var end_time_d = "{{end_time}}"
+    var start_time = new Date(start_time_d[0], start_time_d[1]-1, start_time_d[2])
+    end_time_d = end_time_d.split(",")
+    if (end_time_d == "Now"){
+        var end_time = new Date();
+    }else{
+        var end_time = new Date(end_time_d[0], end_time_d[1]-1, end_time_d[2])
+    }
+    $('#date2').MdPersianDateTimePicker({
+        targetTextSelector: '#inputDate2',
+        selectedDate: end_time,
+        isGregorian: true,
+        placement: 'bottom',
+        align: 'right',
+        autoclose: true
+    });
+    $('#date3').MdPersianDateTimePicker({
+        targetTextSelector: '#inputDate3',
+        selectedDate: start_time,
+        isGregorian: true,
+        placement: 'bottom',
+        align: 'right',
+        autoclose: true
+    });
+    $('#date4').MdPersianDateTimePicker({
+        targetTextSelector: '#inputDate4',
+        selectedDate: end_time,
+        isGregorian: true,
+        placement: 'bottom',
+        align: 'right',
+        autoclose: true
+    });
+    $('#datetimepicker_start').datetimepicker({
+        format: 'HH',
+    });
+    $('#datetimepicker_end').datetimepicker({
+        format: 'HH',
+    });
+</script>
+
+<script>
+    var media = window.matchMedia("(max-width: 700px)")
+    if (media.matches == false){
+        var count1 = 0;
+        var count2 = 0;
+        var count3 = 0;
+        $(document).on('click', '#date2', function(event) {
+            if (count1 == 0){
+                var margin = $(".popover.mds-bootstrap-persian-datetime-picker-popover.fade.bottom.in").css("left")
+                margin = parseInt(margin)
+                margin -= 230;
+                margin = margin.toString() +"px";
+                $(".popover.mds-bootstrap-persian-datetime-picker-popover.fade.bottom.in").css("left", margin)
+                count1 +=1;
+        }
+        });
+
+        $(document).on('click', '#date3', function(event) {
+            if (count2 == 0){
+                var margin = $(".popover.mds-bootstrap-persian-datetime-picker-popover.fade.bottom.in").css("left")
+                margin = parseInt(margin)
+                margin -= 168;
+                margin = margin.toString() +"px";
+                $(".popover.mds-bootstrap-persian-datetime-picker-popover.fade.bottom.in").css("left", margin)
+                count2 +=1;
+        }
+        });
+
+        $(document).on('click', '#date4', function(event) {
+            if (count3 == 0){
+                var margin = $(".popover.mds-bootstrap-persian-datetime-picker-popover.fade.bottom.in").css("left")
+                margin = parseInt(margin)
+                margin -= 168;
+                margin = margin.toString() +"px";
+                $(".popover.mds-bootstrap-persian-datetime-picker-popover.fade.bottom.in").css("left", margin)
+                count3 +=1;
+        }
+        });
+      }else{
+          var count1 = 0;
+          var count2 = 0;
+          var count3 = 0;
+          $(document).on('click', '#date2', function(event) {
+              if (count1 == 0){
+                  var margin = $(".popover.mds-bootstrap-persian-datetime-picker-popover.fade.bottom.in").css("left")
+                  margin = parseInt(margin)
+                  margin -= 266.492;
+                  margin = margin.toString() +"px";
+                  $(".popover.mds-bootstrap-persian-datetime-picker-popover.fade.bottom.in").css("left", margin)
+                  count1 +=1;
+          }
+          });
+
+          $(document).on('click', '#date3', function(event) {
+              if (count2 == 0){
+                  var margin = $(".popover.mds-bootstrap-persian-datetime-picker-popover.fade.bottom.in").css("left")
+                  margin = parseInt(margin)
+                  margin -= 151.18;
+                  margin = margin.toString() +"px";
+                  $(".popover.mds-bootstrap-persian-datetime-picker-popover.fade.bottom.in").css("left", margin)
+                  count2 +=1;
+          }
+          });
+
+          $(document).on('click', '#date4', function(event) {
+              if (count3 == 0){
+                  var margin = $(".popover.mds-bootstrap-persian-datetime-picker-popover.fade.bottom.in").css("left")
+                  margin = parseInt(margin)
+                  margin -= 250.805;
+                  margin = margin.toString() +"px";
+                  $(".popover.mds-bootstrap-persian-datetime-picker-popover.fade.bottom.in").css("left", margin)
+                  count3 +=1;
+          }
+          });
+
+      }
+</script>
+
+{% endblock %}

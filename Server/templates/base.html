@@ -1,0 +1,250 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Favicon icon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'assets/images/uni.png' %}">
+    <title>{% block title %}
+        <!--   -->{% endblock %}
+     </title>
+    <link href="{% static 'dist/css/style.min.css' %}" rel="stylesheet">
+    <link href="{% static 'dist/css/stations.css' %}" rel="stylesheet">
+    <script src="{% static 'dist/vendor/jquery/ajax-jquery-3.4.1.min.js' %}"></script>
+    <script src="{% static 'assets/libs/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+     {% block css %}
+    <!-- -->{% endblock %}
+</head>
+
+<body>
+    <div class="preloader">
+        <div class="lds-ripple">
+            <div class="lds-pos"></div>
+            <div class="lds-pos"></div>
+        </div>
+    </div>
+    <div id="main-wrapper" data-layout="vertical" data-navbarbg="skin5" data-sidebartype="full" data-sidebar-position="absolute" data-header-position="absolute" data-boxed-layout="full">
+        <header class="topbar" data-navbarbg="skin5">
+            <nav class="navbar top-navbar navbar-expand-md navbar-dark">
+                <div class="navbar-header" data-logobg="skin5">
+                    <a class="navbar-brand" href="https://ut.ac.ir" target="_blank">
+                        <b class="logo-icon">
+                                    <img src="{% static 'assets/images/logo.png' %}" alt="homepage" class="light-logo" />
+                                </b>
+
+                    </a>
+                    <a class="nav-toggler waves-effect waves-light d-block d-md-none" href="javascript:void(0)"><i class="ti-menu ti-close"></i></a>
+                </div>
+                <div class="navbar-collapse collapse" id="navbarSupportedContent" data-navbarbg="skin5">
+                    <ul class="navbar-nav float-left mr-auto">
+                        <form class="app-search position-absolute">
+                        </form>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav float-right">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-muted waves-effect waves-dark pro-pic" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src="{% static 'assets/images/users/1.jpg' %}" alt="user" class="rounded-circle" width="31"><i class="fa fa-angle-down"> </i></a>
+                            <div class="dropdown-menu dropdown-menu-right user-dd animated">
+                                <a class="dropdown-item" href="{% url 'profile' request.user.pk %}"><i class="ti-user m-r-5 m-l-5"></i> My Profile</a>
+                                <a class="dropdown-item" href="{% url 'signout' %}"><i class="fa fa-power-off m-r-5 m-l-5"></i> Sign out</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </header>
+        <aside class="left-sidebar" data-sidebarbg="skin6">
+            <!-- Sidebar scroll-->
+            <div class="scroll-sidebar">
+                <!-- Sidebar navigation-->
+                <nav class="sidebar-nav">
+                    <ul id="sidebarnav">
+                        <!-- User Profile-->
+                        <li>
+                            <!-- User Profile-->
+                            <div class="user-profile d-flex no-block dropdown m-t-20">
+                                <div class="user-content hide-menu m-l-10">
+                                    <div class="main">
+                                        <div class="sidebar-menu">
+                                            <ul>
+                                                <li class="sidebar-dropdown">
+                                                    <a class="sidebar-link waves-effect waves-dark sidebar-link" href="#">
+                                                        <span class="hide-menu" style="color: #212529"><i class="mdi mdi-account-settings-variant" style="padding-right: 10px;"></i>Account</span>
+                                                    </a>
+                                                    <div class="sidebar-submenu">
+                                                        <ul>
+                                                            <li>
+                                                                <a id="sidebar-a-mobile" class="sidebar-link waves-effect waves-dark sidebar-link" href="{% url 'profile' request.user.pk %}"><i class="ti-user m-r-5 m-l-5"></i> My Profile</a>
+
+                                                            </li>
+                                                            <li class="sign-out-li">
+                                                                <a id="sidebar-a-mobile2" class="sidebar-link waves-effect waves-dark sidebar-link" href="{% url 'signout' %}"><i class="fa fa-power-off m-r-5 m-l-5"></i>Sign out</a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <h4 class="m-b-0 user-name font-medium"> Hi {{ request.user.username }} </h4>
+                                    </a>
+                                </div>
+                            </div>
+                            <!-- End User Profile-->
+                        </li>
+                        <!-- User Profile-->
+                        <div class="User-profile-custom">
+                            <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link" href="{% url 'map' %}" aria-expanded="false"><i class="mdi mdi-map"></i><span class="hide-menu">Map</span></a></li>
+                            <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link" href="{% url 'plot' '0' %}" aria-expanded="false" style="width: 230px;"><i class="mdi mdi-chart-line"></i><span class="hide-menu">Plot and download</span></a></li>
+                            {% if request.user.userType == 'is_user' %}
+                            <li class="sidebar-item" style="width: 155px;">
+                                <a href="{% url 'messages' request.user.pk %}" aria-expanded="false" class="sidebar-link waves-effect waves-dark sidebar-link" style="display: block;"><i class="ti-email m-r-5 m-l-5"></i><span class="hide-menu" style="margin-bottom: -5px;margin-left: 5px; position: absolute;">Inbox<span id = "message_inbox_count" style="font-size: 16px" class="hide-menu"></span></span></a>   
+                            </li>
+                            <li class="sidebar-item" style="width: 155px;">
+                                <a href="{% url 'request_list' request.user.pk %}" aria-expanded="false" class="sidebar-link waves-effect waves-dark sidebar-link" style="display: block;"><i class=" mdi mdi-folder-download"></i><span class="hide-menu" style="margin-bottom: -5px; margin-left: 5px; position: absolute;">Requests<span style="font-size: 16px" class="hide-menu"></span></span></a>
+                            </li>
+                            {% endif %} {% if request.user.userType == 'is_operator' %}
+                            <div class="sidebar-menu-Admins">
+                                <ul id="sidebarnav">
+                                    <li class="sidebar-dropdown-Admins">
+                                        <a class="sidebar-link waves-effect waves-dark sidebar-link" href="#">
+                                            <i class="mdi mdi-raspberrypi"></i>
+                                            <span class="hide-menu" style="color: #212529">Station</span>
+                                        </a>
+                                        <div class="sidebar-submenu-Admins">
+
+                                            <ul>
+                                                <li>
+                                                    <a id="sidebar-a" class="sidebar-link waves-effect waves-dark sidebar-link" href="{% url 'station_setup' %}"><i class="mdi mdi-wrench"></i> Setup</a>
+
+                                                </li>
+                                                <li>
+                                                    <a id="sidebar-a" class="sidebar-link waves-effect waves-dark sidebar-link" href="{% url 'station_list' %}"><i class="mdi mdi-monitor"></i> My stations</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <ul style="margin-top:60px;">
+                                            <li style="width: 155px;">
+                                                <a href="{% url 'messages' request.user.pk %}" aria-expanded="false" style="display: block;"><i class="ti-email m-r-5 m-l-5"></i><span class="hide-menu" style="margin-top: 1px;margin-left: 5px; position: absolute;">Inbox<span id = "message_inbox_count" style="font-size: 16px" class="hide-menu"></span></span></a>                                            
+                                            </li>
+                                        </ul>
+                                        <ul style="margin-top:60px;">
+                                            <li style="width: 155px; margin:auto;">
+                                                <a href="{% url 'request_list' request.user.pk %}" aria-expanded="false" style="display: block;"><i class=" mdi mdi-folder-download"></i><span class="hide-menu" style="margin-top: -1px;margin-left: 5px; position: absolute;">Requests<span style="font-size: 16px" class="hide-menu"></span></span></a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                            {% endif %} {% if request.user.userType == 'is_admin' %}
+                            <div class="sidebar-menu-Admins">
+                                <ul id="sidebarnav">
+                                    <li class="sidebar-dropdown-Admins">
+                                        <a class="sidebar-link waves-effect waves-dark sidebar-link" href="#">
+                                            <i class="mdi mdi-raspberrypi"></i>
+                                            <span class="hide-menu" style="color: #212529">Station</span>
+                                        </a>
+                                        <div class="sidebar-submenu-Admins">
+
+                                            <ul>
+                                                <li>
+                                                    <a id="sidebar-a" class="sidebar-link waves-effect waves-dark sidebar-link" href="{% url 'station_setup' %}"><i class="mdi mdi-wrench"></i> Setup</a>
+
+                                                </li>
+                                                <li>
+                                                    <a id="sidebar-a" class="sidebar-link waves-effect waves-dark sidebar-link" href="{% url 'station_list' %}"><i class="mdi mdi-monitor"></i> Control Panel</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="left-sidebar-add-user">
+                                <ul>
+                                    <li>
+                                        <a href="{% url 'signup' request.user.pk %}" aria-expanded="false"><i class="mdi mdi-account-plus"></i>
+                                                <span class="hide-menu">users</span>
+                                            </a>
+                                    </li>
+                                </ul>
+                                <ul style="margin-top:60px;">
+                                    <li style="width: 155px; margin:auto;">
+                                        <a href="{% url 'messages' request.user.pk %}" aria-expanded="false" style="display: block;"><i class="ti-email m-r-5 m-l-5"></i><span class="hide-menu" style="margin-top: -1px;margin-left: 5px; position: absolute;">Inbox<span id = "message_inbox_count" style="font-size: 16px" class="hide-menu"></span></span></a>
+                                    </li>
+                                </ul>
+                                <ul style="margin-top:60px;">
+                                    <li style="width: 155px; margin:auto;">
+                                        <a href="{% url 'request_list' request.user.pk %}" aria-expanded="false" style="display: block;"><i class=" mdi mdi-folder-download"></i><span class="hide-menu" style="margin-top: -1px;margin-left: 5px; position: absolute;">Requests<span style="font-size: 16px" class="hide-menu"></span></span></a>
+                                    </li>
+                                </ul>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </ul>
+
+                </nav>
+            </div>
+        </aside>
+        <div class="page-wrapper">
+            <div class="page-breadcrumb">
+                <div class="row align-items-center">
+                    {% block users %} {% endblock %}
+                    <div class="col-5">
+                        <h4 class="page-title">{% block pageName %}
+                            <!-- page name -->{% endblock %}</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="container-fluid" id="tabel-mobile-style">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                {% block content %}
+                                <!-- content block-->{% endblock %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <footer class="footer text-center">
+                © 2020 <a href="https://ut.ac.ir" target="_blank">University of Tehran</a> All rights reserved
+            </footer>
+
+        </div>
+    </div>
+    <!-- Bootstrap tether Core JavaScript -->
+    <script src="{% static 'assets/libs/popper.js/dist/umd/popper.min.js' %}"></script>
+    <script src="{% static 'dist/js/app-style-switcher.js' %}"></script>
+    <!--Wave Effects -->
+    <script src="{% static 'dist/js/waves.js' %}"></script>
+    <!--Menu sidebar -->
+    <script src="{% static 'dist/js/sidebarmenu.js' %}"></script>
+    <!--Custom JavaScript -->
+    <script src="{% static 'dist/js/custom.js' %}"></script>
+    <script src="{% static 'dist/js/pages/sidebar-mobile.js' %}"></script>
+    <script src="{% static 'dist/js/password_strength_meter.js' %}"></script>
+
+    <script>
+    $(document).ready(function() {
+        $.ajax({
+            type: "GET",
+            url: "{% url 'inbox_message_count' request.user.pk %}",
+            success: function(data){
+                $("#message_inbox_count").text('(' + data.count +')');
+            }
+        })
+    });    
+    </script>
+</body>
+
+</html>
+
+

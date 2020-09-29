@@ -1,0 +1,355 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Map{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'dist/css/ol.css' %}" type="text/css">
+    <script src="{% static 'dist/js/ol.js' %}"></script>
+
+    <link rel="stylesheet" href="{% static 'assets/libs/bootstrap/dist-v3/css/bootstrap.css' %}">
+    <script src="{% static 'assets/libs/jquery/dist/jquery.min.js' %}"></script>
+    <script src="{% static 'assets/libs/bootstrap/dist-v3/js/bootstrap.js' %}"></script>
+
+    <link rel="stylesheet" href="{% static 'assets/libs/treeview/bootstrap-treeview.min.css' %}">
+    <script src="{% static 'assets/libs/treeview/bootstrap-treeview.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'dist/css/plot_style.css' %}" type="text/css">
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.1.0/cookieconsent.min.css" />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.1.0/cookieconsent.min.js"></script>
+    <script src="https://unpkg.com/lz-string@1.4.4/libs/lz-string.min.js"></script>
+{% endblock %}
+
+{% block pageName %} Map {% endblock %}
+{% block content %}
+        <div class="row-map-main">
+            <div class="column-map-main">
+                <div class="row-map1">
+                    <div class="column-map1" >
+                        <button type="button" class="btn btn-default" id="btn-search">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <div class="column-map2" style="padding: 2px;">
+                        <div class="form-group">
+                            <label for="input-search" class="sr-only">Search Tree:</label>
+                            <input type="input" class="form-control" id="input-search" placeholder="Type to search..." value="">
+                        </div>
+                    </div>
+                </div>
+                <div class="row-map3">
+                    <div id="myTreeView" class="TreeView-map"></div>
+                </div>
+            </div>
+            <div class="column-map3">
+                <div id="map" class="map">
+                    <div class="map-style" style="outline-style: solid; outline-width: 5px; outline-color: white; -moz-outline-radius: 10px;"></div>
+                    <div class="map-style" style="outline-style: solid; outline-width: 1.5px; outline-color: rgba(0,0,0,.125); -moz-outline-radius: 5px;"></div>
+                </div>
+                <div id="popup" class="ol-popup">
+                    <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+                    <div id="popup-content"></div>
+                </div>
+            </div>
+        </div>
+
+    <script type="text/javascript">
+        var Map = ol.Map;
+        var View = ol.View;
+        var VectorLayer = ol.layer.Vector;
+        var VectorSource = ol.source.Vector;
+        var Tile = ol.layer.Tile;
+        var OSM = ol.source.OSM;
+        var GeoJSON = ol.format.GeoJSON;
+        var Style = ol.style;
+        var Overlay = ol.Overlay;
+
+        var lableStyle = function(feature){
+            return new Style.Text({
+                // textAlign: 'center',
+                // textBaseline: 'middle',
+                // font: ,
+                text: feature.get('StationId').trunc(10),
+                fill: new Style.Fill({color: '#000000'}),
+                stroke: new Style.Stroke({color: '#ffffff', width: 3}),
+                offsetX: 0,
+                offsetY: 5,
+                // rotation: 10
+            });
+        };
+
+        var iconStyle = function(feature){
+            var health = feature.get('Health');
+            var type = feature.get('Sensor Type');
+            var icon = '';
+            if (type == 'type1') {
+                if (health == 0) {
+                    image = "{% static 'assets/images/sensoricon/10.png' %}";
+                } else if (health == 1) {
+                    image = "{% static 'assets/images/sensoricon/11.png' %}";
+                } else if (health == 2) {
+                    image = "{% static 'assets/images/sensoricon/12.png' %}";
+                } else {
+                    image = "{% static 'assets/images/sensoricon/1.png' %}";
+                }
+            } else if (type == 'type2') {
+                if (health == 0) {
+                    image = "{% static 'assets/images/sensoricon/20.png' %}";
+                } else if (health == 1) {
+                    image = "{% static 'assets/images/sensoricon/21.png' %}";
+                } else if (health == 2) {
+                    image = "{% static 'assets/images/sensoricon/22.png' %}";
+                } else {
+                    image = "{% static 'assets/images/sensoricon/2.png' %}";
+                }
+            } else {
+                image = "{% static 'assets/images/sensoricon/0.png' %}";
+            }
+            return new Style.Icon({
+                anchor: [0.5, 1],
+                anchorXUnits: 'fraction',
+                anchorYUnits: 'fraction',
+                src: image
+            });
+        };
+
+        function pointStyle(feature) {
+            return new Style.Style({
+                image: iconStyle(feature),
+                text: lableStyle(feature)
+            });
+        }
+
+        var vectorS = new VectorSource({
+            features: (new GeoJSON()).readFeatures({{ geojsonObject | safe }})
+        });
+
+        var vectorL = new VectorLayer({
+            source: vectorS,
+            style: pointStyle
+        });
+
+        var container = document.getElementById('popup');
+        var content = document.getElementById('popup-content');
+        var closer = document.getElementById('popup-closer');
+
+        var overlay = new Overlay({
+            element: container,
+            positioning: 'bottom-center',
+            stopEvent: false,
+            offset: [0, -50],
+            autoPan: true,
+            autoPanAnimation: {
+                duration: 250
+            }
+        });
+
+        closer.onclick = function() {
+            overlay.setPosition(undefined);
+            closer.blur();
+            return false;
+        };
+
+        var map = new Map({
+            target: 'map',
+            overlays: [overlay],
+            layers: [
+            new Tile({
+                source: new OSM()
+            }),
+            vectorL
+            ],
+            view: new View({
+            projection: 'EPSG:4326',
+            center: [52.4146, 35.6891],
+            zoom: 9
+            })
+        });
+
+        function ContentOfPopup(pixel) {
+            var feature = map.forEachFeatureAtPixel(pixel,
+                function(feature) {
+                return feature;
+                });
+
+            if (feature) {
+                var coordinates = feature.getGeometry().getCoordinates();
+                overlay.setPosition(coordinates);
+                var st_id = feature.get('ID');
+                var url = "{%url 'plot' '0' %}".replace('0', st_id);
+                health = feature.get('Health');
+                if (health == 0){
+                    circle_id = "circle_orange";
+                    health_status = "<span style='color:orange'> Check client data logger </span>";
+                }
+                else if (health == 1){
+                    circle_id = "circle_green";
+                    health_status = "<span style='color:green'> ONLINE </span>";
+                }
+                else if (health == 2){
+                    circle_id = "circle_red";
+                    health_status = "<span style='color:red'> OFFLINE </span>";
+                }else{
+                    circle_id = "circle_black";
+                    health_status = "<span style='color:black'> Deactive </span>";
+                }
+                content.innerHTML = '<h5><div id='+circle_id+'></div><b>' + health_status + '</b></h5>'
+                                    +'<font size="2">'
+                                        +'<table>'
+                                            +'<tr>'
+                                                +'<td style="width: 35%;">Station id:</td>'
+                                                +'<td style="padding-left: 5px;">' + feature.get('StationId') + '</td>'
+                                            +'</tr>'
+                                            +'<tr>'
+                                                +'<td style="width: 35%;">City:</td>'
+                                                +'<td style="padding-left: 5px;">' + feature.get('City') + '</td>'
+                                            +'</tr>'
+                                        {% if request.user.userType != 'is_user' %}
+                                            +'<tr>'
+                                                +'<td style="width: 35%">Operator:</td>'
+                                                +'<td style="padding-left: 5px;">' + feature.get('Operator') + '</td>'
+                                            +'</tr>'
+                                        {%endif %}
+                                            +'<tr>'
+                                                +'<td style="width: 35%">Sensor Type:</td>'
+                                                +'<td style="padding-left: 5px;">' + feature.get('Sensor Type') + '</td>'
+                                            +'</tr>'
+                                            +'<tr>'
+                                                +'<td style="width: 35%">Address:</td>'
+                                                +'<td style="padding-left: 5px;">' + feature.get('Address') + '</td>'
+                                            +'</tr>'
+                                            +'<tr>'
+                                                +'<td style="width: 35%">Status:</td>'
+                                                +'<td style="padding-left: 5px;"><b>'
+                                                    +'<font color="' + (feature.get('Status') == 'Active' ? 'green' : 'red') + '">'
+                                                        + feature.get('Status')
+                                                    +'</font>'
+                                                +'</b></td>'
+                                            +'</tr>'
+                                            +'<tr>'
+                                                +'<td style="width: 35%">Start Time:</td>'
+                                                +'<td style="padding-left: 5px;">' + feature.get('Start Time') + '</td>'
+                                            +'</tr>'
+                                            +'<tr>'
+                                                +'<td style="width: 35%">End Time:</td>'
+                                                +'<td style="padding-left: 5px;">' + feature.get('End Time') + '</td>'
+                                            +'</tr>'
+                                            +'<tr>'
+                                                +'<td style="width: 35%">Longitude:</td>'
+                                                +'<td style="padding-left: 5px;">' + feature.get('Longitude') + '</td>'
+                                            +'</tr>'
+                                            +'<tr>'
+                                                +'<td style="width: 35%">Latitude:</td>'
+                                                +'<td style="padding-left: 5px;">' + feature.get('Latitude') + '</td>'
+                                            +'</tr>'
+                                        +'</table>'
+                                    +'</font>'
+                                    +'<form action="'+ url +'" method="GET" target="_blank" >'
+                                        +'<input type="hidden" id="siteID" value=' + feature.get('ID') + '>'
+                                        +'<input class="btn" type="submit" value="Show Data" style="font-size:13px;">'
+                                    +'</form>';
+            }
+        }
+
+        map.on('pointermove', function(evt) {
+            ContentOfPopup(evt.pixel);
+        });
+
+        map.on('click', function(evt) {
+            ContentOfPopup(evt.pixel);
+        });
+
+        String.prototype.trunc = String.prototype.trunc ||
+            function(n) {
+            return this.length > n ? this.substr(0, n - 1) + '...' : this.substr(0);
+        };
+
+        function myTreeData() {
+            var json = '[';
+            vectorS.forEachFeature(function (feature) {
+                health = feature.get('Health');
+                if(health == 0){
+                    name = "<span style='color:orange'> " + feature.get('StationId')+ " (" + feature.get('City') + ")" + "</span>";
+                }
+                else if(health == 1){
+                    name = "<span style='color:green'>" + feature.get('StationId')+ " (" + feature.get('City') + ")" + "</span>";
+                }
+                else if(health == 2){
+                    name = "<span style='color:red'> " + feature.get('StationId')+ " (" + feature.get('City') + ")" +  "</span>";
+                }else{
+                    name = "<span style='color:black'><a href="+ window.url +" style='color:black;'> " + feature.get('StationId')+ " (" + feature.get('City') + ")" + "</a></span>";
+                }
+                json = json + "{"
+                            + '"text": "' + name + '", '
+                            + '"color": "#234b6e", '
+                            + '"Longitude": "' + feature.get('Longitude') + '", '
+                            + '"Latitude": "' + feature.get('Latitude') + '", '
+                            + (feature.get('Status') == 'Active' ? '"tags": ["Active"], ' : '')
+                            + '"nodes":['
+                            {% if request.user.userType != 'is_user' %}
+                                + '{'
+                                    + '"text": "  ' + feature.get('Operator') + '", '
+                                    + '"icon": "glyphicon glyphicon-user"'
+                                + '},'
+                            {% endif %}
+                                + '{'
+                                    + '"text": "  ' + feature.get('Sensor Type') + '", '
+                                    + '"icon": "glyphicon glyphicon-wrench"'
+                                + '}, '
+                                + '{'
+                                    + '"text": "  ' + feature.get('Status') + '", '
+                                    + '"icon": "glyphicon glyphicon-' + (feature.get('Status') == 'Active' ? 'ok-sign"' : 'remove-sign"') + ', '
+                                    + '"color": ' + (feature.get('Status') == 'Active' ? '"green"' : '"red"')
+                                + '}'
+                            + ']},';
+            });
+            json = json.substr(0, json.length - 1) + ']';
+
+            return JSON.parse(json);;
+        };
+
+        var $searchableTree = $('#myTreeView').treeview({
+        data: myTreeData(),
+        showBorder: false,
+        color: "#428bca",
+        expandIcon: 'glyphicon glyphicon-chevron-right',
+        collapseIcon: 'glyphicon glyphicon-chevron-down',
+        highlightSelected: true,
+        levels: 1,
+        showTags: true,
+        searchResultColor: "#ffffff",
+        searchResultBackColor: "#aaaaaa",
+        onNodeSelected: function(event, node) {
+            var view = new View({
+                projection: 'EPSG:4326',
+                center: [node.Longitude, node.Latitude],
+                zoom: map.getView().getZoom()
+                });
+            if (node.Longitude){
+                map.setView(view);
+                var pixel = map.getPixelFromCoordinate([node.Longitude, node.Latitude]);
+                ContentOfPopup(pixel);
+            }
+        }
+    });
+
+    var search = function(e) {
+        $searchableTree.treeview('collapseAll');
+        var pattern = $('#input-search').val();
+        var options = {
+        ignoreCase: false,
+        exactMatch: false,
+        revealResults: true
+        };
+        var results = $searchableTree.treeview('search', [ pattern, options ]);
+    };
+
+    $('#btn-search').on('click', search);
+    $('#input-search').on('keyup', search);
+</script>
+
+<script>
+    $(document).ready(function () {
+        
+    })
+
+</script>
+{% endblock %}
