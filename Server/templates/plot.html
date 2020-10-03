@@ -181,7 +181,7 @@
 
 </div>
 
-<script type="text/javascript" src="{% static 'assets/libs/MathJax/MathJax.js' %}?config=AM_HTMLorMML-full"></script>
+{% comment %} <script type="text/javascript" src="{% static 'assets/libs/MathJax/MathJax.js' %}?config=AM_HTMLorMML-full"></script> {% endcomment %}
 <script src="{% static 'assets/libs/jquery/dist/jquery.min.js' %}"></script>
 <script src="{% static 'assets/libs/bootstrap/dist-v3/js/bootstrap.js' %}"></script>
 <script src="{% static 'assets/libs/treeview/bootstrap-treeview.min.js' %}"></script>
@@ -274,7 +274,7 @@
                         drawPoints: true,
                         pointSize: 3,
                         axisLineWidth: 2,
-                        ylabel: "`a_x` <small>`[m/s^2]`</small>",
+                        ylabel: "<big>A</big>x   [<i>m/s^2</i>]",
                         title: "{{StationId}}({{StationCity}}) <p id='plot_help'>"
                              + "<span style='font-size:14px; padding-right:2px;' class='glyphicon glyphicon-search'></span>"
                              + "Hold down the Shift key and drag the mouse</p>",
@@ -301,7 +301,7 @@
                         drawPoints: true,
                         pointSize: 3,
                         axisLineWidth: 2,
-                        ylabel: "`a_y` <small>`[m/s^2]`</small>",
+                        ylabel: "<big>A</big>y   [<i>m/s^2</i>]",
                         axes:{
                             'x':{
                                 axisLabelFontSize: 0
@@ -325,7 +325,7 @@
                         drawPoints: true,
                         pointSize: 3,
                         axisLineWidth: 2,
-                        ylabel: "`a_z` <small>`[m/s^2]`</small>",
+                        ylabel: "<big>A</big>z   [<i>m/s^2</i>]",
                         axes:{
                             'x':{
                                 axisLabelFontSize: 0
@@ -351,7 +351,7 @@
                         drawPoints: true,
                         pointSize: 3,
                         axisLineWidth: 2,
-                        ylabel: "`temp` <small>`[C]`</small>",
+                        ylabel: "<big>temp</big>   [<i>C</i>]",
                         xlabel: "<b>GPS Time [sec]</b>",
                         interactionModel: {                    
                             'mousedown' : downV3,
@@ -592,7 +592,7 @@
                     pointSize: 3,
                     rangeSelectorPlotFillColor: "#FFF",
                     axisLineWidth: 2,
-                    ylabel: "<b>`a_x [m/s^2]`</b>",
+                    ylabel: "<big>A</big>x   [<i>m/s^2</i>]",
                     title: "{{StationId}}({{StationCity}}) <p id='plot_help'>"
                          + "<span style='font-size:14px; padding-right:2px;' class='glyphicon glyphicon-search'></span>"
                          + "Hold down the Shift key and drag the mouse</p>",
@@ -619,7 +619,7 @@
                     drawPoints: true,
                     pointSize: 3,
                     axisLineWidth: 2,
-                    ylabel: "<b>`a_y [m/s^2]`</b>",
+                    ylabel: "<big>A</big>y   [<i>m/s^2</i>]",
                     axes:{
                         'x':{
                             axisLabelFontSize: 0
@@ -643,7 +643,7 @@
                     drawPoints: true,
                     pointSize: 3,
                     axisLineWidth: 2,
-                    ylabel: "<b>`a_z [m/s^2]`</b>",
+                    ylabel: "<big>A</big>z   [<i>m/s^2</i>]",
                     interactionModel: {                    
                         'mousedown' : downV3,
                         'mousemove' : moveV3,
@@ -664,7 +664,7 @@
                     drawPoints: true,
                     pointSize: 3,
                     axisLineWidth: 2,
-                    ylabel: "<b>`temp [C]`</b>",
+                    ylabel: "<big>temp</big>   [<i>C</i>]",
                     xlabel: "<b>GPS Time [sec]</b>",
                     interactionModel: {                    
                         'mousedown' : downV3,

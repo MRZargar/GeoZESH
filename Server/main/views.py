@@ -24,12 +24,9 @@ User = get_user_model()
 
 def update_hist(table_name, gps_week, second):
     url = settings.GEOLABAPI_HOST + ':' + settings.GEOLABAPI_PORT + '/api/Data/Histogram/{}?week={}&t={}'.format(table_name, gps_week, second)
-    print("-----------------------------------------------")
-    print(url)
-    print("-----------------------------------------------")
     r = requests.get(url, verify=False)
     if r.status_code not in range(200,300):
-        raise Exception(r.status_code)
+        raise Exception(r.text)
     return [float(i) for i in r.text[1:-1].split(',')]
 
 def get_data(table_name, from_week, from_second, to_week, to_second):

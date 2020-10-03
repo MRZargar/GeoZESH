@@ -40,6 +40,8 @@ services:
 # python manage.py makemigrations download users message stations &&
 # python manage.py migrate
 
+# trigger فراموش نشود
+
   api:
     build: 
       context: ./API/.
