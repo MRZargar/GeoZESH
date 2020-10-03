@@ -148,6 +148,12 @@
             return false;
         };
 
+        var view = new View({
+            projection: 'EPSG:4326',
+            center: [53, 32.4],
+            zoom: 5
+        });
+
         var map = new Map({
             target: 'map',
             overlays: [overlay],
@@ -157,12 +163,19 @@
             }),
             vectorL
             ],
-            view: new View({
-            projection: 'EPSG:4326',
-            center: [52.4146, 35.6891],
-            zoom: 9
-            })
+            view: view
         });
+
+        var extent = vectorS.getExtent();
+        map.getView().fit(extent, {padding:[50, 50, 50, 50]});
+        // var center = ol.extent.getCenter(extent);
+        // view.animate({
+        //     center: center,
+        //     duration: 2000,
+        // });
+
+        // view.fit(vectorS.getFeatures()[0].getGeometry(), {padding: [170, 50, 30, 150]});
+
 
         function ContentOfPopup(pixel) {
             var feature = map.forEachFeatureAtPixel(pixel,
@@ -346,10 +359,4 @@
     $('#input-search').on('keyup', search);
 </script>
 
-<script>
-    $(document).ready(function () {
-        
-    })
-
-</script>
 {% endblock %}
