@@ -1,14 +1,5 @@
-/*
-Template Name: Admin Pro Admin
-Author: Wrappixel
-Email: niravjoshi87@gmail.com
-File: js
-*/
 $(function() {
     "use strict";
-    // ============================================================== 
-    // Newsletter
-    // ============================================================== 
 
     var chart = new Chartist.Line('.campaign', {
         labels: [1, 2, 3, 4, 5, 6, 7, 8],
@@ -36,9 +27,6 @@ $(function() {
 
     });
 
-    // Offset x1 a tiny amount so that the straight stroke gets a bounding box
-    // Straight lines don't get a bounding box 
-    // Last remark on -> http://www.w3.org/TR/SVG11/coords.html#ObjectBoundingBox
     chart.on('draw', function(ctx) {
         if (ctx.type === 'area') {
             ctx.element.attr({
@@ -47,7 +35,6 @@ $(function() {
         }
     });
 
-    // Create the gradient definition on created event (always after chart re-render)
     chart.on('created', function(ctx) {
         var defs = ctx.svg.elem('defs');
         defs.elem('linearGradient', {
