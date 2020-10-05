@@ -169,21 +169,21 @@ def plot(request, stationID):
     #user access for tree view  
     obj = request.user
     if obj.userType == 'is_admin':
-        stations = Setup.objects.all().order_by('date').reverse()
+        stations = Setup.objects.all().order_by('station_id')
         geojson = JSON.GetGeoJsonStations(stations)
     elif obj.userType == 'is_operator':
         station_access = Access.objects.filter(user_id = obj.id)
         user_access = []
         for station_q in station_access:
             user_access.append(station_q.station_id)
-        stations = Setup.objects.filter(id__in = user_access).order_by('date').reverse()
+        stations = Setup.objects.filter(id__in = user_access).order_by('station_id')
         geojson = JSON.GetGeoJsonStations(stations)
     elif obj.userType == 'is_user':
         station_access = Access.objects.filter(user_id = obj.id)
         user_access = []
         for station_q in station_access:
             user_access.append(station_q.station_id)
-        stations = Setup.objects.filter(id__in = user_access).order_by('date').reverse()
+        stations = Setup.objects.filter(id__in = user_access).order_by('station_id')
         geojson = JSON.GetGeoJsonStations(stations, 'user')
 
     if stationID != 0:
@@ -284,21 +284,21 @@ def plot(request, stationID):
 def map(request):
     obj = request.user
     if obj.userType == 'is_admin':
-        stations = Setup.objects.all().order_by('date').reverse()
+        stations = Setup.objects.all().order_by('station_id')
         geojson = JSON.GetGeoJsonStations(stations)
     elif obj.userType == 'is_operator':
         station_access = Access.objects.filter(user_id = obj.id)
         user_access = []
         for station_q in station_access:
             user_access.append(station_q.station_id)
-        stations = Setup.objects.filter(id__in = user_access).order_by('date').reverse()
+        stations = Setup.objects.filter(id__in = user_access).order_by('station_id')
         geojson = JSON.GetGeoJsonStations(stations)
     elif obj.userType == 'is_user':
         station_access = Access.objects.filter(user_id = obj.id)
         user_access = []
         for station_q in station_access:
             user_access.append(station_q.station_id)
-        stations = Setup.objects.filter(id__in = user_access).order_by('date').reverse()
+        stations = Setup.objects.filter(id__in = user_access).order_by('station_id')
         geojson = JSON.GetGeoJsonStations(stations, 'user')
 
     if len(stations) >= 1:       

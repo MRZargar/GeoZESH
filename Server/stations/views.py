@@ -125,9 +125,9 @@ def station_list(request):
 		user_access = []
 		for station_q in station_access:
 			user_access.append(station_q.station_id)
-		station_list = Setup.objects.filter(id__in = user_access).order_by('date').reverse()
+		station_list = Setup.objects.filter(id__in = user_access).order_by('station_id')
 	elif obj.userType == 'is_admin':
-		station_list = Setup.objects.all().order_by('date').reverse()
+		station_list = Setup.objects.all().order_by('station_id')
 	healths = []
 	for station in station_list:
 		if station.status == True:

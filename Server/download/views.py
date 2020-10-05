@@ -28,13 +28,13 @@ def download(request, pk):
     if request.method == "GET" and request.GET['method'] == "give station name":
         obj = request.user
         if obj.userType == "is_admin":
-            stations = Setup.objects.all().order_by('date').reverse()
+            stations = Setup.objects.all().order_by('station_id')
         else:
             station_access = Access.objects.filter(user_id = obj.id)
             user_access = []
             for station_q in station_access:
                 user_access.append(station_q.station_id)
-            stations = Setup.objects.filter(id__in = user_access).order_by('date').reverse()
+            stations = Setup.objects.filter(id__in = user_access).order_by('station_id')
         station_list = []
         for station in stations:
             station_list.append(station.station_id)

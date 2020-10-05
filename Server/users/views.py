@@ -206,7 +206,7 @@ def access_station(request, pk):
     else:
         username = request.GET['UserName']
         this_user = User.objects.get(username=username)
-        stations = all_staions.Setup.objects.all().order_by('date').reverse()
+        stations = all_staions.Setup.objects.all().order_by('station_id')
         user_access = all_staions.Access.objects.filter(user = this_user)
         all_access = []
         stations_id = []
