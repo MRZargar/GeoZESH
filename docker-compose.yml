@@ -23,7 +23,6 @@ services:
       - EMAIL_HOST_PASSWORD=ABcd!@1234
       - EMAIL_PORT=587
     command: >
-      sh -c "python manage.py runserver 0.0.0.0:8000"
       sh -c "python manage.py makemigrations download users message stations &&
              python manage.py migrate && 
              python manage.py runserver 0.0.0.0:8000"
