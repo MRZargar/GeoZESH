@@ -23,6 +23,7 @@ services:
       - EMAIL_HOST_PASSWORD=ABcd!@1234
       - EMAIL_PORT=587
     command: >
+      sh -c "python manage.py runserver 0.0.0.0:8000"
       sh -c "python manage.py makemigrations download users message stations &&
              python manage.py migrate && 
              python manage.py runserver 0.0.0.0:8000"
@@ -30,15 +31,9 @@ services:
       - db
       - api
 
-# mv ./users/models.py ./users/models.py.temp &&
-# mv ./users/models.py.SuperUser ./users/models.py &&
 # python manage.py makemigrations download users message stations &&
-# python manage.py migrate && 
-# echo "from users.models import CustomUser as User; User.objects.create_superuser('geolab', 'geolab@ut.ac.ir', 'Ab1234')" | python manage.py shell &&
-# mv ./users/models.py ./users/models.py.SuperUser &&
-# mv ./users/models.py.temp ./users/models.py &&
-# python manage.py makemigrations download users message stations &&
-# python manage.py migrate
+# python manage.py migrate &&
+# echo "from users.models import CustomUser as User; User.objects.create_superuser('geolab', 'geolab@ut.ac.ir', 'Ab1234', phone_number='09121111111')" | python manage.py shell
 
 # trigger فراموش نشود
 
