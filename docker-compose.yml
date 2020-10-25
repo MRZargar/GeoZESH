@@ -32,7 +32,9 @@ services:
 
 # python manage.py makemigrations download users message stations &&
 # python manage.py migrate &&
-# echo "from users.models import CustomUser as User; User.objects.create_superuser('geolab', 'geolab@ut.ac.ir', 'Ab1234', phone_number='09121111111')" | python manage.py shell
+# echo "from users.models import CustomUser as User; User.objects.create_superuser('geolab', 'geolab@ut.ac.ir', 'Ab1234', phone_number='09121111111')" | python manage.py shell &&
+# python create_sql.py &&
+# python manage.py migrate
 
 # trigger فراموش نشود
 
