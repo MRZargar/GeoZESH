@@ -6,6 +6,7 @@ from gwpy.time import tconvert, to_gps
 from .models import DownloadLink
 import requests
 from django.shortcuts import render
+from django.core.exceptions import PermissionDenied
 
 
 # Convet time to gps week and seconds
@@ -53,9 +54,14 @@ def download(request, pk):
         from_date = from_date_main.split("/")
         to_date = to_date_main.split("/")
         from_time = (datetime(int(from_date[0]), int(from_date[1]), int(from_date[2]))) 
-        to_time = (datetime(int(to_date[0]), int(to_date[1]), int(to_date[2]))) 
-        if (to_time - from_time).total_seconds() < 0 or int(end_hour) < int(start_hour):
-            return JsonResponse({}, status=400)
+        to_time = (datetime(int(to_date[0]), int(to_date[1]), int(to_date[2])))
+        delta_time = to_time - from_time 
+        if delta_time.total_seconds() < 0 or int(end_hour) < int(start_hour):
+            return JsonResponse({'ErrorType':'Error1'}, status=400) #the start time greater than the end time
+        elif len(stations_id) > 5 or delta_time.days > 31:
+            return JsonResponse({'ErrorType':'Error2'}, status=400) #the maximum number of stations selected can be five or the maximum number of days selected can be thirty
+        elif len(stations_id) > 1 and delta_time.days > 7:
+            return JsonResponse({'ErrorType':'Error2'}, status=400) #When more than one station is selected, only can be selected seven days.
         else:
             DownloadLink.objects.create(user=request.user,
                                         stations_id=all_stations_id,
@@ -72,6 +78,21 @@ def download(request, pk):
 def requests_list(request, pk):
     download_links = DownloadLink.objects.filter(user=request.user).order_by('request_date').reverse()
     return render(request, 'download_list.html', {'download_links':download_links})
+
+
+@login_required(login_url='signpage')
+def download_last_hour(request, pk):
+    obj = request.user
+    if obj.userType != 'is_admin':
+        raise PermissionDenied
+    else:
+        stations_id = request.GET.getlist('StationsId[]')
+        all_stations_id = ""
+        for station_id in stations_id:
+            all_stations_id += "-" + station_id
+        return JsonResponse({}, status=200)
+
+
 
 
 
