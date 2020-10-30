@@ -217,14 +217,6 @@
         hist_bar_update = true;
     })
 
-    $('#select_all-model_single').on('click', function(){
-        if ($(this).is(':checked')) {
-            $('div input[class="form-check-input"]').prop('checked', true);
-        } else {
-            $('div input[class="form-check-input"]').prop('checked', false);
-        }
-    });
-
     $(document).on('click', '.mds-bootstrap-persian-datetime-picker-container .table > tbody > tr > td[data-day]', function(event){
         event.preventDefault();
         if (hist_bar_update){
