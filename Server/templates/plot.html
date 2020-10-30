@@ -124,7 +124,7 @@
                             <p class="time_for_cleander" style="margin-top:7.5px; margin-left: 15px;">START DATE</p>
                             <p class="time_for_cleander" style="margin-top:7.5px; margin-left: 15px;">START HOUR</p>
                         </div>
-                        <div  id="right_cleander" class="col"  style="flex-grow:0.30">
+                        <div  id="right_cleander" class="col"  style="flex-grow:0.18">
                             <div class="calendar" style="width: 150px;">
                                 <div class="input-group">
                                     <input type="text" id="inputDate3" class="form-control" placeholder="Gregorian Calendar" aria-label="date3" aria-describedby="date3">
@@ -144,7 +144,7 @@
                             <p class="time_for_cleander" style="margin-top:7.5px; margin-left: 15px;">END DATE</p>
                             <p class="time_for_cleander" style="margin-top:7.5px; margin-left: 15px;">END HOUR</p>
                         </div>
-                        <div  id="left_cleander" class="col" style="flex-grow:0.30; margin-left: -15px;">
+                        <div  id="left_cleander" class="col" style="flex-grow:0.18; margin-left: -15px;">
                             <div class="calendar" style="width: 150px;">
                                 <div class="input-group">
                                     <input type="text" id="inputDate4" class="form-control" placeholder="Gregorian Calendar" aria-label="date4" aria-describedby="date4">
@@ -499,21 +499,23 @@
             },
             url: "{% url 'downloads_files' request.user.pk %}",
             success: function(data) {
-                count = data.count;
+                count = data.stations_list.length;
+                var numberOfRows = Math.floor(count/4);
+                changeColumns = count - (numberOfRows * 4 + 1);
                 main = "";
                 if (count == 0) {
                     temp = "No station has been registered yet";
                 } else {
                     for (i in data.stations_list) {
                         this_station_id = data.stations_list[i];
-                        if (i % 2 == 0 && i != 0) {
+                        if ((parseInt(i)+1) % 4 == 0 && i != 0) {
                             column = '<div class="w-100" style="height:15px;"></div>';
                         } else {
                             column = "";
                         }
                         if (this_station_id == station_id) {
                             temp =
-                                '<div class="col" style="flex-grow:0.3">' +
+                                '<div class="col" style="flex-grow:0.18">' +
                                 '<div class="form-check">' +
                                 '<input class="form-check-input" type="checkbox" value="'+ this_station_id +'" id="defaultCheck1" checked="true" name="station" style="margin-left:-18px">' +
                                 '<label class="form-check-label" for="defaultCheck1">' +
@@ -523,8 +525,14 @@
                                 '</div>' +
                                 column 
                         }else{
+                            var firstLine = '<div class="col" style="flex-grow:0.18">';
+                            if (changeColumns == 1 && i == count - 1){
+                                firstLine = '<div class="col" style="flex-grow:0.18; margin-right:3.65rem">';
+                            } else if (changeColumns == 2 && i == count - 1){
+                                firstLine = '<div class="col" style="flex-grow:0.18; margin-right:2rem">';
+                            }
                             temp =
-                                '<div class="col" style="flex-grow:0.3">' +
+                                firstLine +
                                 '<div class="form-check">' +
                                 '<input class="form-check-input" type="checkbox" value="'+ this_station_id +'" id="defaultCheck1" name="station" style="margin-left:-18px">' +
                                 '<label class="form-check-label" for="defaultCheck1">' +
