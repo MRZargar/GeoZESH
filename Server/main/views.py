@@ -305,7 +305,3 @@ def map(request):
         return render(request, 'map.html', dict(geojsonObject=geojson))
     else:
         return render(request, 'no_station_map.html')
-
-    
-# def my_handler404(request, exception):
-#     return render(request, '404.html', status=404)
