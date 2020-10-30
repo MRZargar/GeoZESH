@@ -113,6 +113,10 @@
           </div>
           <div class="modal-body2">
                 <div class="overflow-auto">
+                    <div class="all_check_box" style="margin-left:3.2rem;">
+                        <input name="select_all-model_single" value="1" id="select_all_model_single" class ="form-check-input" type="checkbox">
+                        <label class="form-check-label" for="select_all_model_single" style="margin-left:5px;">ALL</label>
+                    </div>
                     <div class="modal-body">
 
                     </div>
@@ -212,6 +216,14 @@
         event.preventDefault();
         hist_bar_update = true;
     })
+
+    $('#select_all-model_single').on('click', function(){
+        if ($(this).is(':checked')) {
+            $('div input[class="form-check-input"]').prop('checked', true);
+        } else {
+            $('div input[class="form-check-input"]').prop('checked', false);
+        }
+    });
 
     $(document).on('click', '.mds-bootstrap-persian-datetime-picker-container .table > tbody > tr > td[data-day]', function(event){
         event.preventDefault();
@@ -419,6 +431,15 @@
             })
         }
     })
+
+    $('#select_all_model_single').on('click', function(){
+        if ($(this).is(':checked')) {
+            $('div input[class="form-check-input"]').prop('checked', true);
+        } else {
+            $('div input[class="form-check-input"]').prop('checked', false);
+        }
+    });
+
     $(document).on('click', "#download_end", function(event){
         event.preventDefault();
         $("#download_all").css("opacity", 0.5)
@@ -456,7 +477,6 @@
             },
             error: function(data){
                 if (data.responseJSON.ErrorType == 'Error1') {
-                    console.log("here")
                     $('#error_2_id_description').css('display', 'block');
                     $('#error_2_id_description').text('The start time could not be greater than the end time');
                     $("#download_all").css("opacity", 1);
@@ -480,9 +500,6 @@
         $(this).find("span").css("background", "#f20a34");
     }
     });
-
-
-
 
     $(document).on('click', "#download_button", function(event){
         $('#error_3_id_description').css('display', 'none')
@@ -517,7 +534,7 @@
                             temp =
                                 '<div class="col" style="flex-grow:0.18">' +
                                 '<div class="form-check">' +
-                                '<input class="form-check-input" type="checkbox" value="'+ this_station_id +'" id="defaultCheck1" checked="true" name="station" style="margin-left:-18px">' +
+                                '<input class="form-check-input" type="checkbox" value="'+ this_station_id +'" id="defaultCheck1" name="station" style="margin-left:-18px">' +
                                 '<label class="form-check-label" for="defaultCheck1">' +
                                 this_station_id +
                                 '</label>' +
@@ -545,7 +562,9 @@
                         main += temp;
                     };
                 };
-                final = '<div class="container">' + '<div class="row">' + main + '</div>'
+                final = '<div class="container">'
+                + '<div class="row">'
+                + main + '</div>'
                  +'<p id="error_3_id_description" class="invalid-feedback"><strong>Please select at least one station</strong></p>'
                 $('.modal-body').prepend(final);
             }

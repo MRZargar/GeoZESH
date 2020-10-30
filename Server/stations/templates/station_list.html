@@ -110,6 +110,9 @@
                 $.each($("input[name='deactive_station']:checked"), function(){ 
                     deactive_station_selceted.push($(this).val());
                 });
+                $.each($("input[name='active_station']:checked"), function(){ 
+                    deactive_station_selceted.push($(this).val());
+                });
                 window.value = deactive_station_selceted;
                 $("#exampleModal").modal('show');
 

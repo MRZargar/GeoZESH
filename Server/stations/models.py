@@ -28,7 +28,8 @@ class Setup(models.Model):
 	health = models.IntegerField(default=0)
 	raspberryID = models.IntegerField(blank=False, null=False)
 	health_time = models.DateTimeField(default=datetime.datetime.now())
-
+	is_deleted = models.BooleanField(default=False)
+	
 	def __str__(self):
 		return self.station_id
 

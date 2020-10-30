@@ -125,9 +125,9 @@ def station_list(request):
 		user_access = []
 		for station_q in station_access:
 			user_access.append(station_q.station_id)
-		station_list = Setup.objects.filter(id__in = user_access).order_by('station_id')
+		station_list = Setup.objects.filter(id__in = user_access).filter(is_deleted=False).order_by('station_id')
 	elif obj.userType == 'is_admin':
-		station_list = Setup.objects.all().order_by('station_id')
+		station_list = Setup.objects.all().filter(is_deleted=False).order_by('station_id')
 	healths = []
 	for station in station_list:
 		if station.status == True:
@@ -152,7 +152,6 @@ def station_deactive(request, pk):
 	if request.method == "POST":
 		form = StationDeactivate(request.POST)
 		stations_id = request.POST.getlist('StationIds[]')
-		print(stations_id)
 		operator = request.user
 		description = request.POST['Discribtion']
 		if len(description) == 0 and obj.userType =='is_operator':
@@ -194,8 +193,13 @@ def delete_station(request, pk):
 	if request.method == "POST":
 		station_ids= request.POST.getlist("StationIds[]")
 		for station_id in station_ids:
-			Setup.objects.get(station_id=station_id).delete()
-		return JsonResponse({}, status=200)
-
-
-
+			station = Setup.objects.get(station_id=station_id)
+			description = ""
+			Deactivate.objects.create(operator=obj,
+									  station_id=station,
+									  description=description)
+			station.status = False
+			Raspberry.objects.get(raspberryID=station.raspberryID).delete()
+			station.is_deleted = True
+			station.save()
+		return JsonResponse({"data":station_id}, status=200)
