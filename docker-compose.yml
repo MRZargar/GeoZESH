@@ -9,7 +9,7 @@ services:
       - 80:8000
     volumes: 
       - ./Server:/home/App
-    restart: always
+    # restart: always
     environment: 
       - DB_HOST=db
       - DB_NAME=postgres
@@ -23,19 +23,17 @@ services:
       - EMAIL_HOST_PASSWORD=ABcd!@1234
       - EMAIL_PORT=587
     command: >
-      sh -c "python manage.py makemigrations download users message stations &&
-             python manage.py migrate && 
+      sh -c "python manage.py wait_for_db &&
+             python manage.py makemigrations download users message stations &&
+             python manage.py migrate &&
+             python create_sql.py &&
+             python manage.py migrate &&
              python manage.py runserver 0.0.0.0:8000"
     depends_on: 
       - db
       - api
 
-# python manage.py makemigrations download users message stations &&
-# python manage.py migrate &&
 # echo "from users.models import CustomUser as User; User.objects.create_superuser('geolab', 'geolab@ut.ac.ir', 'Ab1234', phone_number='09121111111')" | python manage.py shell &&
-# python create_sql.py &&
-# python manage.py migrate
-
 # trigger فراموش نشود
 
   api:
