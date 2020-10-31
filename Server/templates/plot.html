@@ -8,41 +8,8 @@
 <link rel="stylesheet" href="{% static 'dist/css/ol.css' %}" type="text/css">
 <link rel="stylesheet" href="{% static 'dist/css/datetimepicker.css' %}" type="text/css">
 
-<style>
-    .ul-plot-toolbar {
-        list-style-type: none;
-        padding: 2.5px;
-        overflow: hidden;
-        margin: auto auto;
-    }
-    
-    .li-plot-toolbar {
-        padding: 5px;
-        float: right;
-    }
-    
-    .li-plot-toolbar-text {
-        float: right;
-        color: white;
-        text-align: center;
-        padding-top: 8px;
-        padding-right: 2px;
-        padding-left: 10px;
-        font-size: large;
-        font-weight: bold;
-    }
-
-    .dygraph-legend {
-        background-color: rgba(200, 200, 255, 0.75);
-        padding: 1px;
-        border-radius: 20px;
-        box-shadow: 1px 1px px #888;
-        width: auto;
-        left: 100px !important;
-      }
-</style>
-
-{% endblock %} {% block content %}
+{% endblock %}
+{% block content %}
 <div class="line_graph_main">
     <div id='myChart1' class="line_graph_1" ></div>
     <div id='myChart2' class="line_graph_2" ></div>
@@ -74,7 +41,7 @@
                 <li class="li-plot-toolbar" style="width: 140px; padding: 0;">
                     <div class="input-group">
                         <input type="text" id="inputDate2" class="form-control" placeholder="Gregorian Calendar" aria-label="date2" aria-describedby="date2">
-                        <span class="input-group-addon" id="main_cleander">
+                        <span class="input-group-addon" id="main_calendar">
                             <span class="glyphicon glyphicon-calendar" style="cursor: pointer;" id="date2"></span>
                         </span>
                     </div>
@@ -129,12 +96,12 @@
                 <hr>
                  <div class="container">
                     <div class="row">
-                        <div class="col" style="flex-grow:0.11">
-                            <p class="time_for_cleander" style="margin-top:7.5px; margin-left: 15px;">START DATE</p>
-                            <p class="time_for_cleander" style="margin-top:7.5px; margin-left: 15px;">START HOUR</p>
+                        <div id="start_date" class="col">
+                            <p class="time_for_calendar">START DATE</p>
+                            <p class="time_for_calendar">START HOUR</p>
                         </div>
-                        <div  id="right_cleander" class="col"  style="flex-grow:0.18">
-                            <div class="calendar" style="width: 150px;">
+                        <div  id="right_calendar" class="col">
+                            <div class="calendar">
                                 <div class="input-group">
                                     <input type="text" id="inputDate3" class="form-control" placeholder="Gregorian Calendar" aria-label="date3" aria-describedby="date3">
                                     <span class="input-group-addon">
@@ -149,12 +116,12 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col" style="flex-grow:0.11">
-                            <p class="time_for_cleander" style="margin-top:7.5px; margin-left: 15px;">END DATE</p>
-                            <p class="time_for_cleander" style="margin-top:7.5px; margin-left: 15px;">END HOUR</p>
+                        <div class="col" id="end_date">
+                            <p class="time_for_calendar">END DATE</p>
+                            <p class="time_for_calendar">END HOUR</p>
                         </div>
-                        <div  id="left_cleander" class="col" style="flex-grow:0.18; margin-left: -15px;">
-                            <div class="calendar" style="width: 150px;">
+                        <div  id="left_calendar" class="col">
+                            <div class="calendar">
                                 <div class="input-group">
                                     <input type="text" id="inputDate4" class="form-control" placeholder="Gregorian Calendar" aria-label="date4" aria-describedby="date4">
                                     <span class="input-group-addon">

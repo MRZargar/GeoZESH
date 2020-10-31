@@ -241,6 +241,137 @@ tr{
 }
 
 
+#error_2_id_description{
+    display: none;
+    font-size: 16px;
+}
+#correct_2_id_description{
+display: none;
+font-size: 16px;
+}
+#error_3_id_description{
+display: none;
+font-size: 16px;
+margin-left: -1rem;
+margin-bottom: -20px;
+margin-top: 20px; 
+
+}
+.time_error{
+    position: relative;
+    margin-left: 25px;
+    margin-top: 10px;
+}
+
+
+.dygraph-label.dygraph-ylabel{
+    margin-top: -10px;
+}
+
+#download_help_button:focus{
+    color: #fff;
+    background-color: #31b0d5;
+    border-color: #269abc;
+    outline: none;
+
+}
+
+
+#plot_help{
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-weight: 100;
+    font-size: 14px;
+    display: inline-block;
+}
+
+#deleted_stations_button{
+    margin-left: 5px;
+    padding: 0.3rem 0.6rem;
+}
+
+#deleted_stations_button:hover{
+    color: #ffffff;
+}
+.deleted_station{
+    position: absolute;
+    top: 0.6rem;
+    left: 8rem;
+}
+
+#start_date{
+    flex-grow: 0.15;
+}
+
+#start_date .time_for_calendar{
+    margin-top:7.5px;
+    margin-left: 10px;
+}
+
+#right_calendar{
+    flex-grow: 0.18;
+}
+
+#right_calendar .calendar{
+    width: 150px;
+}
+
+#end_date{
+    flex-grow: 0.15;
+    margin-left: 7.5rem;
+}
+
+#end_date .time_for_calendar{
+    margin-top: 7.5px;
+    margin-left: -13px;
+}
+
+#left_calendar{
+    flex-grow: 0.18;
+    margin-left: -15px;
+}
+
+#left_calendar .calendar{
+    width: 150px;
+}
+
+/* here */
+
+
+
+.ul-plot-toolbar {
+    list-style-type: none;
+    padding: 2.5px;
+    overflow: hidden;
+    margin: auto auto;
+}
+
+.li-plot-toolbar {
+    padding: 5px;
+    float: right;
+}
+
+.li-plot-toolbar-text {
+    float: right;
+    color: white;
+    text-align: center;
+    padding-top: 8px;
+    padding-right: 2px;
+    padding-left: 10px;
+    font-size: large;
+    font-weight: bold;
+}
+
+.dygraph-legend {
+    background-color: rgba(200, 200, 255, 0.75);
+    padding: 1px;
+    border-radius: 20px;
+    box-shadow: 1px 1px px #888;
+    width: auto;
+    left: 100px !important;
+  }
+
 
 /*######### mobile ###########*/
 
@@ -318,25 +449,40 @@ tr{
     .chart span:before {
         padding: 10px 0 0;
         font-size: 9px;
-     }
+    }
      #inputDate3{
         font-size: 9px;
         padding: 3px;
-     }
+    }
     #inputDate4{
         font-size: 9px;
         padding: 3px;
-     }
-     .calendar{
+    }
+    .calendar{
         width: 85px ! important;
-     }
-     .time_for_cleander{
+    }
+    .time_for_calendar{
         margin: 0 !important;
         font-size: 10px;
-     }
-     #left_cleander{
+    }
+    #left_calendar{
         margin-left: 0 !important;
-     }
+    }
+    #start_date{
+        margin-top: 1rem;
+        flex-grow: 0.3;
+    }
+    #start_date p:nth-child(2) {
+        margin-top: 2rem !important;
+    }
+    #end_date{
+        margin-top: 1rem;
+        flex-grow: 0.3;
+        margin-left: 0;
+    }
+    #end_date p:nth-child(2){
+        margin-top: 2rem !important;
+    }
 }
 
 @media screen and (max-width: 1169px) {
@@ -348,74 +494,205 @@ tr{
     }
     .chart span:before {
         padding: 10px 0 0;
-     }
-     #right_cleander{
+    }
+     #right_calendar{
         flex-grow:0.4 !important;
-     }
-     #left_cleander{
-        flex-grow: 0.4 !important;
-     }
+    }
+     #left_calendar{
+        flex-grow: 0.5 !important;
+    }
      #plot_help{
       display: none !important;
-     }
+    }
+}
+
+@media (max-width: 992px) and (min-width: 768px){
+    .time_for_calendar{
+        margin: 0 !important;
+        font-size: 10px;
+    }
+    #right_calendar{
+        flex-grow: 0.2 !important;
+    }
+    #left_calendar{
+        flex-grow: 0.2 !important;
+    }
+    #start_date{
+        margin-top: 1rem;
+        flex-grow: 0.12;
+    }
+    #start_date p:nth-child(2) {
+        margin-top: 2rem !important;
+    }
+    #end_date{
+        margin-top: 1rem;
+        flex-grow: 0.12;
+        margin-left: 0;
+    }
+    #end_date p:nth-child(2){
+        margin-top: 2rem !important;
+    }
+     .calendar{
+        width: 100px !important;
+    }
+    .input-group-addon{
+         padding: 6px 6px;
+    }
+    #inputDate3{
+        font-size: 10px;
+        padding: 3px;
+    }
+    #inputDate4{
+        font-size: 10px;
+        padding: 3px;
+    }
+    .modal-footer .btn{
+        font-size: 10px;
+    }
 }
 
 
-#error_2_id_description{
-  display: none;
-  font-size: 16px;
-}
-#correct_2_id_description{
-  display: none;
-  font-size: 16px;
-}
-#error_3_id_description{
-  display: none;
-  font-size: 16px;
-  margin-left: -1rem;
-  margin-bottom: -20px;
-  margin-top: 20px; 
 
-}
-.time_error{
-    position: relative;
-    margin-left: 25px;
-    margin-top: 10px;
-}
-
-
-.dygraph-label.dygraph-ylabel{
-    margin-top: -10px;
-}
-
-#download_help_button:focus{
-    color: #fff;
-    background-color: #31b0d5;
-    border-color: #269abc;
-    outline: none;
-
-}
-
-
-#plot_help{
-    position: absolute;
-    top: 0;
-    right: 0;
-    font-weight: 100;
-    font-size: 14px;
-    display: inline-block;
-}
-
-#deleted_stations_button{
-    margin-left: 5px;
-    padding: 0.3rem 0.6rem;
+@media (max-width: 768px) and (min-width: 680px){
+    .time_for_calendar{
+        margin: 0 !important;
+        font-size: 10px;
+    }
+    #right_calendar{
+        flex-grow: 0.2 !important;
+    }
+    #left_calendar{
+        flex-grow: 0.2 !important;
+    }
+    #start_date{
+        margin-top: 1rem;
+        flex-grow: 0.25;
+    }
+    #start_date p:nth-child(2) {
+        margin-top: 2rem !important;
+    }
+    #end_date{
+        margin-top: 1rem;
+        flex-grow: 0.25;
+        margin-left: 0;
+    }
+    #end_date p:nth-child(2){
+        margin-top: 2rem !important;
+    }
+     .calendar{
+        width: 100px !important;
+    }
+    .input-group-addon{
+         padding: 6px 6px;
+    }
+    #inputDate3{
+        font-size: 10px;
+        padding: 3px;
+    }
+    #inputDate4{
+        font-size: 10px;
+        padding: 3px;
+    }
+    .modal-footer .btn{
+        font-size: 10px;
+    }
 }
 
-#deleted_stations_button:hover{
-    color: #ffffff;
-}
-.deleted_station{
-    position: absolute;
-    top: 0.6rem;
-    left: 8rem;
+
+@media screen and (max-width: 680px) {
+    .row-map-main {
+        display: flex;
+        flex-direction: column-reverse;
+    }
+    .column-map-main {
+        margin-left: 10px;
+        float: none;
+        width: 100%;
+    }
+    .column-map1 {
+        width: 17%;
+    }
+    .column-map3 {
+        width: 100%;
+    }
+    .map,
+    .map-style {
+        height: 300px;
+        width: 100%;
+    }
+    #myTreeView {
+        height: 300px;
+    }
+    .histogram_and_treeView{
+        flex-direction: column-reverse;
+    }
+    .histogram_and_calender{
+        width: 100%;
+        padding: 10px;
+        float: none;
+        margin-left: 20px;
+    }
+    .column-map1 {
+        width: 17%;
+    }
+    .column-map2{
+        margin-left: -10px;
+    }
+    .column-map3 {
+        width: 100%;
+    }
+    .treeView_main{
+        width:auto;
+        margin-left: 30px;
+
+    }
+    .row-map1{
+        margin-left: 20px;
+    }
+    #histogram-label{
+        font-size: 1.4rem;
+        padding-top: 10px !important;
+    }
+    .ol-layer canvas{
+        display: inline-block;
+    }
+    .input-group-addon{
+        padding: 6px 6px ;
+    }
+    .form-control{
+        font-size: 10px;
+    }
+    .li-plot-toolbar{
+        width: 102px !important;
+    }
+    #download_button{
+        width: 90px;
+        font-size: 11px;
+        padding: 8px;
+    }
+    .chart span:before {
+        padding: 10px 0 0;
+        font-size: 9px;
+    }
+     #inputDate3{
+        font-size: 9px;
+        padding: 3px;
+    }
+    #inputDate4{
+        font-size: 9px;
+        padding: 3px;
+    }
+     .calendar{
+        width: 85px ! important;
+    }
+     .time_for_cleander{
+        margin: 0 !important;
+        font-size: 10px;
+    }
+     #left_cleander{
+        margin-left: 0 !important;
+    }
+    .modal-footer .btn{
+        font-size: 10px;
+    }
 }
