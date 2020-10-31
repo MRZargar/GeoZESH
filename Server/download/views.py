@@ -26,6 +26,7 @@ def gps_to_cleander(week, second):
 
 @login_required(login_url='signpage')
 def download(request, pk):
+
     if request.method == "GET" and request.GET['method'] == "give station name":
         obj = request.user
         if obj.userType == "is_admin":
@@ -36,6 +37,16 @@ def download(request, pk):
             for station_q in station_access:
                 user_access.append(station_q.station_id)
             stations = Setup.objects.filter(id__in = user_access).filter(is_deleted=False).order_by('station_id')
+        station_list = []
+        for station in stations:
+            station_list.append(station.station_id)
+        return JsonResponse({'stations_list': station_list}, status=200)
+
+    elif request.method == "GET" and request.GET['method'] == "give station name deleted":
+        obj = request.user
+        if obj.userType !="is_admin":
+            raise PermissionDenied
+        stations = Setup.objects.all().filter(is_deleted=True).order_by('station_id')
         station_list = []
         for station in stations:
             station_list.append(station.station_id)

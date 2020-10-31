@@ -116,6 +116,11 @@
                     <div class="all_check_box" style="margin-left:3.2rem;">
                         <input name="select_all-model_single" value="1" id="select_all_model_single" class ="form-check-input" type="checkbox">
                         <label class="form-check-label" for="select_all_model_single" style="margin-left:5px;">ALL</label>
+                        {% if request.user.userType == 'is_admin' %}
+                            <div class="deleted_station">
+                                <button type="button" class="btn btn-outline-danger" id="deleted_stations_button">Deleted stations</button>
+                            </div>
+                        {% endif %}
                     </div>
                     <div class="modal-body">
 
@@ -400,8 +405,8 @@
             Stations.push($(this).val());
         });
         if (Stations.length == 0){
-            $("download_all").css("opacity", 1);
             $("#error_3_id_description").css('display', 'block');
+            $("#download_all").css("opacity", 1)
         } else {
             $.ajax({
                 type: "GET",
@@ -416,6 +421,7 @@
                 $('#correct_2_id_description').css('display', 'block')
             },
             error: function() {
+                $("#download_all").css("opacity", 1)
                 $('#error_2_id_description').css('display', 'block');
                 $('#error_2_id_description').text('Please try again');
                 $("#download_all").css("opacity", 1);
@@ -449,6 +455,7 @@
         if (stations.length == 0){
             $("#download_all").css("opacity", 1);
             $('#error_3_id_description').css('display', 'block');
+            
         } else{
             $.ajax({
               type: "GET",
@@ -493,20 +500,15 @@
     }
     });
 
-    $(document).on('click', "#download_button", function(event){
-        $('#error_3_id_description').css('display', 'none')
-        $('#error_2_id_description').css('display', 'none')
-        $('#correct_2_id_description').css('display', 'none')
-        var station_id = "{{StationId}}";
-        $(".bar_value2").find('span').css("background", "#2d8180");
-        event.preventDefault();
+    function give_station_name(url_name, method){
         $(".modal-body").empty()
+        var station_id = "{{StationId}}";
         $.ajax({
             type: "GET",
             data: {
-                 'method' : "give station name"
+                 'method' : method
             },
-            url: "{% url 'downloads_files' request.user.pk %}",
+            url: url_name,
             success: function(data) {
                 count = data.stations_list.length;
                 var numberOfRows = Math.floor(count/4);
@@ -561,7 +563,35 @@
                 $('.modal-body').prepend(final);
             }
         });
+    }
+
+    $(document).on('click', "#download_button", function(event){
+        $('#deleted_stations_button').text("deleted stations");
+        $('#deleted_stations_button').attr('class', 'btn btn-outline-danger');
+        deleted_button_status = false;
+        $('#error_3_id_description').css('display', 'none')
+        $('#error_2_id_description').css('display', 'none')
+        $('#correct_2_id_description').css('display', 'none')
+        $(".bar_value2").find('span').css("background", "#2d8180");
+        event.preventDefault();
+        give_station_name("{% url 'downloads_files' request.user.pk %}", "give station name");
     });
+    
+    var deleted_button_status = false;
+    $(document).on('click','#deleted_stations_button', function(event){
+        event.preventDefault();
+        if (deleted_button_status){
+            $('#deleted_stations_button').text("deleted stations");
+            $('#deleted_stations_button').attr('class', 'btn btn-outline-danger');
+            give_station_name("{% url 'downloads_files' request.user.pk %}", "give station name");
+            deleted_button_status = false;
+        } else {
+            $('#deleted_stations_button').text("Stations");
+            $('#deleted_stations_button').attr('class', 'btn btn-outline-success');
+            give_station_name("{% url 'downloads_files' request.user.pk %}", "give station name deleted");
+            deleted_button_status = true;
+        }
+    })
 
     var VectorSource = ol.source.Vector;
     var GeoJSON = ol.format.GeoJSON;

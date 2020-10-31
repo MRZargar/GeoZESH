@@ -405,3 +405,17 @@ tr{
     font-size: 14px;
     display: inline-block;
 }
+
+#deleted_stations_button{
+    margin-left: 5px;
+    padding: 0.3rem 0.6rem;
+}
+
+#deleted_stations_button:hover{
+    color: #ffffff;
+}
+.deleted_station{
+    position: absolute;
+    top: 0.6rem;
+    left: 8rem;
+}
