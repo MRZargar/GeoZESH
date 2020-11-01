@@ -8337,11 +8337,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\_M.R.Zargar\\_GeoLab\\GeoLab\\GeoLabAPI\\API\\GeoLabAPI.csproj",
+      "projectUniqueName": "D:\\_M.R.Zargar\\GeoLab\\GeoZESH\\API\\API\\GeoLabAPI.csproj",
       "projectName": "GeoLabAPI",
-      "projectPath": "D:\\_M.R.Zargar\\_GeoLab\\GeoLab\\GeoLabAPI\\API\\GeoLabAPI.csproj",
+      "projectPath": "D:\\_M.R.Zargar\\GeoLab\\GeoZESH\\API\\API\\GeoLabAPI.csproj",
       "packagesPath": "C:\\Users\\Mohammad Reza Zargar\\.nuget\\packages\\",
-      "outputPath": "D:\\_M.R.Zargar\\_GeoLab\\GeoLab\\GeoLabAPI\\API\\obj\\",
+      "outputPath": "D:\\_M.R.Zargar\\GeoLab\\GeoZESH\\API\\API\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Mohammad Reza Zargar\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -8410,5 +8410,13 @@
         "runtimeIdentifierGraphPath": "C:\\dotnet-sdk-3.1.402-win-x64\\sdk\\3.1.402\\RuntimeIdentifierGraph.json"
       }
     }
-  }
+  },
+  "logs": [
+    {
+      "code": "Undefined",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Problem reading the cache file D:\\_M.R.Zargar\\GeoLab\\GeoZESH\\API\\API\\obj\\project.nuget.cache : Invalid property identifier character: <. Path 'version', line 3, position 0."
+    }
+  ]
 }

@@ -30,18 +30,17 @@ namespace GeoLabAPI
         {
             services.AddControllers();
 
-            services.AddDbContext<geolabContext>(options =>
-                options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"))
-                    .ReplaceService<IModelCacheKeyFactory, DynamicModelCacheKeyFactory>());
+            // string connectionString = Configuration.GetConnectionString("DefaultConnection");
+            string connectionString = string.Format("Server={0};Port={1};DataBase={2};User Id={3};Password={4};",
+                Environment.GetEnvironmentVariable("DB_HOST"),
+                Environment.GetEnvironmentVariable("DB_PORT"),
+                Environment.GetEnvironmentVariable("DB_NAME"),
+                Environment.GetEnvironmentVariable("DB_USER"),
+                Environment.GetEnvironmentVariable("DB_PASS"));
             
             services.AddDbContext<geolabContext>(options =>
-                options.UseNpgsql(string.Format("Server={};Port={};DataBase={};User Id={};Password={};",
-                        Environment.GetEnvironmentVariable("DB_HOST"),
-                        Environment.GetEnvironmentVariable("DB_PORT"),
-                        Environment.GetEnvironmentVariable("DB_NAME"),
-                        Environment.GetEnvironmentVariable("DB_USER"),
-                        Environment.GetEnvironmentVariable("DB_PASS"))
-                    ).ReplaceService<IModelCacheKeyFactory, DynamicModelCacheKeyFactory>());
+                options.UseNpgsql(connectionString)
+                    .ReplaceService<IModelCacheKeyFactory, DynamicModelCacheKeyFactory>());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
