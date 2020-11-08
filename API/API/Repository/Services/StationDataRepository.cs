@@ -137,13 +137,25 @@ namespace GeoLabAPI
             if (!IsExistStation(tableName))
                 throw new NotFoundException();
 
-            return db.Datas
+            // var a = db.Datas
+            //     .Where(x =>
+            //         x.WEEK == week 
+            //         &&
+            //         x.Hour == hour)
+            //     .GroupBy(x => x.Hour)
+            //     .Select(x => new {Count = x.Count()})
+            //     .ToList()
+            //     .FirstOrDefault()
+            //     ?.Count ?? 0;
+
+            var a = db.Datas
                 .Where(x =>
                     x.WEEK == week 
                     &&
                     x.Hour == hour)
-                .GroupBy(g => g.Hour)
                 .Count();
+
+            return a;
         }
 
         public async Task<StationData> GetByIdAsync(string tableName, int week, double T)

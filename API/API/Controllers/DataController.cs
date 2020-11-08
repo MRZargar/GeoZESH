@@ -27,6 +27,9 @@ namespace GeoLabAPI.Controllers
         [HttpGet("Histogram/{tableName}/{week}/{day}")]
         public async Task<ActionResult<IEnumerable<double>>> GetCount(string tableName, int week, int day)
         {
+            if (day < 0 || day > 7)
+                return BadRequest();
+
             try
             {
                 int hour = (day - 1) * 24 + 1;
