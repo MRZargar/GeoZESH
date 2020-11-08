@@ -24,34 +24,16 @@ namespace GeoLabAPI.Controllers
             stations = new StationsSetupRepository(context);
         }
 
-        private void nextHour(ref int week, ref double t)
+        [HttpGet("Histogram/{tableName}/{week}/{day}")]
+        public async Task<ActionResult<IEnumerable<double>>> GetCount(string tableName, int week, int day)
         {
-            t += oneHourAsSeconds;
-            if (t >= oneWeekAsSeconds)
-            {
-                t -= oneWeekAsSeconds;
-                week++;
-            }
-        }
-
-        [HttpGet("Histogram/{tableName}")]
-        public async Task<ActionResult<IEnumerable<double>>> GetCount(string tableName, int? week, double? t)
-        {
-            if (week == null || t == null)
-                return NotFound();
-
             try
             {
-                int currentWeek = week.Value;
-                double currentT = t.Value;
+                int hour = (day - 1) * 24 + 1;
                 var HistData = new List<double>();
-                for (int i = 1; i <= 24; i++)
+                for (int i = 0; i < 24; i++)
                 {
-                    var from = new GPSTime(currentWeek, currentT);
-                    nextHour(ref currentWeek, ref currentT);
-                    var to = new GPSTime(currentWeek, currentT - 0.001);
-
-                    var count = datas.GetCount(tableName, from, to);
+                    var count = datas.GetCountByHour(tableName, week, hour + i);
                     double percent = (double)count / (double)dataCountPerHour * 100.0;
 
                     HistData.Add(percent);
@@ -69,7 +51,29 @@ namespace GeoLabAPI.Controllers
             }
         }
 
-        // GET: api/Data
+        [HttpGet("ByHour/{tableName}/{week}/{hour}")]
+        public async Task<ActionResult<IEnumerable<IEnumerable<double>>>> GetDatasByHour(string tableName, int week, int hour)
+        {
+            try
+            {
+                var Datas = (await datas.GetByHourAsync(tableName, week, hour)).ToList();
+                var All = new List<List<double>>();
+                foreach (var data in Datas)
+                {
+                    All.Add(new List<double>() {data.WEEK, data.T, data.AX, data.AY, data.AZ, data.Temp.Value} );
+                }
+                return All;
+            }
+            catch (NotFoundException)
+            {
+                return NotFound();
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(501);
+            }
+        }
+
         [HttpGet("{tableName}")]
         public async Task<ActionResult<IEnumerable<IEnumerable<double>>>> GetDatas(string tableName, int? fromWeek, int? toWeek, double? fromT, double? toT)
         {
@@ -99,7 +103,6 @@ namespace GeoLabAPI.Controllers
             }
         }
 
-        // GET: api/Data/5
         [HttpGet("{tableName}/{week}/{id}")]
         public async Task<ActionResult<IEnumerable<double>>> GetStationData(string tableName, int week, double id)
         {
@@ -118,19 +121,15 @@ namespace GeoLabAPI.Controllers
             }
         }
 
-        // PUT: api/Data/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{tableName}/{week}/{id}")]
         public async Task<IActionResult> PutStationData(string tableName, int week, double id, StationData data)
         {
             if (id != data.T && week != data.WEEK)
-            {
                 return BadRequest();
-            }
 
             try
             {
+                data.Hour = (int)Math.Floor(data.T / 3600) + 1;
                 await datas.UpdateAsync(tableName, data);
                 await datas.saveAsync();
             }
@@ -150,9 +149,6 @@ namespace GeoLabAPI.Controllers
             return RedirectToAction("GetStationData", new { tableName = tableName, id = id, week = week });
         }
 
-        // POST: api/Data
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost("{tableName}")]
         public async Task<ActionResult<StationData>> PostStationData(string tableName, double[][] data)
         {
@@ -198,7 +194,6 @@ namespace GeoLabAPI.Controllers
             return NoContent();
         }
 
-        // DELETE: api/Data/5
         [HttpDelete("{tableName}/{week}/{id}")]
         public async Task<ActionResult<StationData>> DeleteStationData(string tableName, int week, double id)
         {
@@ -223,7 +218,6 @@ namespace GeoLabAPI.Controllers
             return NoContent();
         }
 
-        // POST: api/Data/{RaspberryID}/313
         [HttpPost("{RaspberryID}/313")]
         public async Task<ActionResult<StationData>> PostRaspberry(int RaspberryID)
         {
@@ -265,7 +259,6 @@ namespace GeoLabAPI.Controllers
             }
         }
 
-
         [HttpPut("{tableName}")]
         public async Task<IActionResult> PutStatus(string tableName, RaspberryHealth h)
         {
@@ -292,6 +285,6 @@ namespace GeoLabAPI.Controllers
             }
 
             return NoContent();
-        }       
+        }
     }
 }
