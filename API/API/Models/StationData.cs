@@ -1,4 +1,6 @@
-﻿namespace GeoLabAPI
+﻿using System;
+
+namespace GeoLabAPI
 {
     public partial class StationData
     {
@@ -8,5 +10,11 @@
         public double AY { get; set; }
         public double AZ { get; set; }
         public double? Temp { get; set; }
+        public int? Hour { get; set; }
+
+        public StationData()
+        {
+            Hour = (int)Math.Floor(T / (60 * 60));
+        }
     }
 }

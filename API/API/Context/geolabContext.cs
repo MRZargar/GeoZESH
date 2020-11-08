@@ -42,7 +42,10 @@ namespace GeoLabAPI
 
                 entity.ToTable(tableName);
 
-                entity.HasIndex(e => e.T)
+                entity.HasIndex(e => e.Hour)
+                    .HasName("index_h_" + tableName);
+
+                entity.HasIndex(e => new { e.WEEK, e.T })
                     .HasName("index_" + tableName);
 
                 entity.Property(e => e.WEEK).HasColumnName("week");
@@ -54,6 +57,8 @@ namespace GeoLabAPI
                 entity.Property(e => e.AY).HasColumnName("a_y");
 
                 entity.Property(e => e.AZ).HasColumnName("a_z");
+
+                entity.Property(e => e.Hour).HasColumnName("hour");
 
                 entity.Property(e => e.Temp).HasColumnName("temp");
             });
@@ -89,6 +94,8 @@ namespace GeoLabAPI
                 entity.Property(e => e.HealthTime)
                     .HasColumnName("health_time")
                     .HasColumnType("timestamp with time zone");
+
+                entity.Property(e => e.IsDeleted).HasColumnName("is_deleted");
 
                 entity.Property(e => e.Latitude)
                     .HasColumnName("latitude")
