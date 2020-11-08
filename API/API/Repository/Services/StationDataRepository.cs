@@ -60,6 +60,21 @@ namespace GeoLabAPI
             GC.SuppressFinalize(this);
         }
 
+        public async Task<IEnumerable<StationData>> GetByHourAsync(string tableName, int week, int hour)
+        {
+            db.tableName = tableName.ToLower();
+
+            if (!IsExistStation(tableName))
+                throw new NotFoundException();    
+
+            return await db.Datas
+                .Where(x =>
+                    x.WEEK == week
+                    &&
+                    x.Hour == hour)
+                .ToListAsync();
+        }
+
         public async Task<IEnumerable<StationData>> GetAllAsync(string tableName, GPSTime from = null, GPSTime to = null)
         {
             db.tableName = tableName.ToLower();
@@ -115,6 +130,22 @@ namespace GeoLabAPI
                 .Count();
         }
 
+        public int GetCountByHour(string tableName, int week, int hour)
+        {
+            db.tableName = tableName.ToLower();
+
+            if (!IsExistStation(tableName))
+                throw new NotFoundException();
+
+            return db.Datas
+                .Where(x =>
+                    x.WEEK == week 
+                    &&
+                    x.Hour == hour)
+                .GroupBy(g => g.Hour)
+                .Count();
+        }
+
         public async Task<StationData> GetByIdAsync(string tableName, int week, double T)
         {
             db.tableName = tableName.ToLower();
@@ -149,6 +180,8 @@ namespace GeoLabAPI
             if (IsExist(tableName, data))
                 throw new DuplicateException();
 
+            data.Hour = (int)Math.Floor(data.T / 3600) + 1;
+
             await db.Datas.AddAsync(data);
             return true;
         }
@@ -182,6 +215,7 @@ namespace GeoLabAPI
             d.AY = data.AY == double_NULL ? d.AY : data.AY;
             d.AZ = data.AZ == double_NULL ? d.AZ : data.AZ;
             d.Temp = data.Temp == double_NULL ? d.Temp : data.Temp;
+            d.Hour = (int)Math.Floor(d.T / 3600) + 1;
             
             return true;
         }

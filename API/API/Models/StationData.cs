@@ -11,10 +11,5 @@ namespace GeoLabAPI
         public double AZ { get; set; }
         public double? Temp { get; set; }
         public int? Hour { get; set; }
-
-        public StationData()
-        {
-            Hour = (int)Math.Floor(T / (60 * 60));
-        }
     }
 }

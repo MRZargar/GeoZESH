@@ -19,7 +19,7 @@ namespace GeoLabAPI
         public int? Health { get; set; }
         public int RaspberryId { get; set; }
         public DateTime? HealthTime { get; set; }
-        public bool IsDeleted { get; set; }
+        public bool? IsDeleted { get; set; }
         public int OperatorId { get; set; }
     }
 }

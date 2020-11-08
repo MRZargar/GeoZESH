@@ -191,6 +191,7 @@ namespace GeoLabAPI
             s.City = station.City ?? s.City;
             s.Owner = station.Owner ?? s.Owner;
             s.StationId = station.StationId ?? s.StationId;
+            s.IsDeleted = station.IsDeleted ?? s.IsDeleted;
             
             return true;
         }
