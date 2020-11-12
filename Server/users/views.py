@@ -94,7 +94,7 @@ def active_user_page(request, pk):
                 user.save()
         return JsonResponse({},status=200)
     else:
-        users1 = User.objects.filter(userType='is_user').order_by('date_joined').reverse()
+        users1 = User.objects.filter(userType='is_user').filter(is_staff=False).order_by('date_joined').reverse()
         users2 = User.objects.filter(userType='is_operator').order_by('date_joined').reverse()
         users = users2 | users1
         count_of_user = users.count()

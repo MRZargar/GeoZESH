@@ -20,17 +20,25 @@ from datetime import datetime, timedelta
 from gwpy.time import tconvert, to_gps
 import requests
 from django.conf import settings
+import math
 User = get_user_model()
 
+
+def second_to_hour(second):
+    return math.floor(second / 3600) + 1
+
+def second_to_day(second):
+    return math.floor(second / 86400) + 1
+
 def update_hist(table_name, gps_week, second):
-    url = settings.GEOLABAPI_HOST + ':' + settings.GEOLABAPI_PORT + '/api/Data/Histogram/{}?week={}&t={}'.format(table_name, gps_week, second)
+    url = settings.GEOLABAPI_HOST + ':' + settings.GEOLABAPI_PORT + '/api/Data/Histogram/{}/{}/{}'.format(table_name, gps_week, second_to_day(second))
     r = requests.get(url, verify=False)
     if r.status_code not in range(200,300):
         raise Exception(r.text)
     return [float(i) for i in r.text[1:-1].split(',')]
 
 def get_data(table_name, from_week, from_second, to_week, to_second):
-    url = settings.GEOLABAPI_HOST + ':' + settings.GEOLABAPI_PORT + '/api/Data/{}?fromWeek={}&fromT={}&toWeek={}&toT={}'.format(table_name, from_week, from_second, to_week, to_second)
+    url = settings.GEOLABAPI_HOST + ':' + settings.GEOLABAPI_PORT + '/api/Data/ByHour/{}/{}/{}'.format(table_name, from_week, second_to_hour(from_second))
     r = requests.get(url, verify=False)
     if r.status_code not in range(200,300):
         raise Exception(r.status_code)
