@@ -74,8 +74,8 @@ class Access(models.Model):
 
 class Raspberry(models.Model):
 	raspberryID = models.IntegerField(unique=True, blank=False, null=False)
-	latitude = models.DecimalField(max_digits=20, decimal_places=10, blank=True)
-	longitude = models.DecimalField(max_digits=20, decimal_places=10, blank=True)
+	latitude = models.DecimalField(max_digits=20, decimal_places=10, blank=True, null=True)
+	longitude = models.DecimalField(max_digits=20, decimal_places=10, blank=True, null=True)
 
 	def __str__(self):
 		return str(self.raspberryID)

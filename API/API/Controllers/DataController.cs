@@ -50,7 +50,7 @@ namespace GeoLabAPI.Controllers
             }
             catch(Exception ex)
             {
-                return StatusCode(501);
+                return StatusCode(501, ex.Message);
             }
         }
 

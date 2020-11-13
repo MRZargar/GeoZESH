@@ -48,13 +48,17 @@ while True:
         break
 
 log("(1/5)  Set init Raspberry config...", bcolors.OKCYAN)
-# 
+f = open("geolab.conf", 'a')
+f.write(str(raspberry_id) + "\n")
+f.write(str(lat) + "\n")
+f.write(str(lon) + "\n")
+f.close()
 
 log("(2/5)  Install requirements packages...", bcolors.OKCYAN)
-os.system("pip install psycopg2-binary pandas numpy")
+# os.system("pip install psycopg2-binary pandas numpy")
 
 log("(3/5)  Install postgresql...", bcolors.OKCYAN)
-os.system("sudo apt install postgresql libpq-dev postgresql-client postgresql-client-common -y")
+# os.system("sudo apt install postgresql libpq-dev postgresql-client postgresql-client-common -y")
 
 log("(4/5)  Create database...", bcolors.OKCYAN)
 # 
