@@ -216,8 +216,8 @@ def plot(request, stationID):
         end_hour = "None"
         for i in range(1, 25):
             if hist_data[-i] > 0:
-                end_hour = hist_data[-i]
-            break
+                end_hour = 24 - i
+                break
 
         if end_hour == "None":
             xPlotData, yPlotData ,zPlotData, tempPlotData = d, d, d, d
@@ -261,8 +261,8 @@ def plot(request, stationID):
             end_hour = "None"
             for i in range(1, 25):
                 if hist_data[-i] > 0:
-                    end_hour = hist_data[-i]
-                break
+                    end_hour = 24 - i
+                    break
 
             if end_hour == "None":
                 xPlotData, yPlotData ,zPlotData, tempPlotData = d, d, d, d
