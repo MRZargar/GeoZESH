@@ -137,23 +137,23 @@ namespace GeoLabAPI
             if (!IsExistStation(tableName))
                 throw new NotFoundException();
 
-            // var a = db.Datas
-            //     .Where(x =>
-            //         x.WEEK == week 
-            //         &&
-            //         x.Hour == hour)
-            //     .GroupBy(x => x.Hour)
-            //     .Select(x => new {Count = x.Count()})
-            //     .ToList()
-            //     .FirstOrDefault()
-            //     ?.Count ?? 0;
-
             var a = db.Datas
                 .Where(x =>
                     x.WEEK == week 
                     &&
                     x.Hour == hour)
-                .Count();
+                .GroupBy(x => x.Hour)
+                .Select(x => new {Count = x.Count()})
+                .ToList()
+                .FirstOrDefault()
+                ?.Count ?? 0;
+
+            // var a = db.Datas
+            //     .Where(x =>
+            //         x.WEEK == week 
+            //         &&
+            //         x.Hour == hour)
+            //     .Count();
 
             return a;
         }
