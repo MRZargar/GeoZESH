@@ -222,11 +222,11 @@ namespace GeoLabAPI.Controllers
         }
 
         [HttpPost("{RaspberryID}/313")]
-        public async Task<ActionResult<StationData>> PostRaspberry(int RaspberryID)
+        public async Task<ActionResult<StationData>> PostRaspberry(int RaspberryID, double? lat, double? lon)
         {
             try
             {
-                await datas.InsertRaspberryAsync(new Raspberry(RaspberryID));
+                await datas.InsertRaspberryAsync(new Raspberry(RaspberryID, lat, lon));
                 await datas.saveAsync();
             }
             catch(DuplicateException)
